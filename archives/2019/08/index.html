@@ -366,13 +366,13 @@
                 <span>CaffienCache缓存机制</span>
         </a>
         <div class="abstract-content">
-            CaffienCache缓存机制前言:今日在做项目优化时第一次引入Caffien Cache,该缓存机制能有效提升用户访问获取数据效率,我们可以将几乎不太变更的数据存入本地缓存，并定时更新缓存,在高并发场景将会有效提升系统性能
+            前言:今日在做项目优化时第一次引入Caffien Cache,该缓存机制能有效提升用户访问获取数据效率,我们可以将几乎不太变更的数据存入本地缓存，并定时更新缓存,在高并发场景将会有效提升系统性能
 介绍:
 
 Caffeine is a high performance, near optimal caching library based on Java 8. For more details, see our user’s guide and browse the API docs for the latest release.
 
 Github链接
-一. ...
+一. 三种缓存机制1. 手动加载该例子...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -400,48 +400,12 @@ Github链接
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2019/08/27/2019-08-27-SpringCloud/" >
-            
-                <span>Spring Cloud</span>
-        </a>
-        <div class="abstract-content">
-            Spring Cloud前言: Spring Cloud是Netflix公司开发的一款微服务框架,今天在公司迁移项目时折腾SpringCloud配置折腾了一下午，所以在这里总结一下Spring Cloud的生产者和消费者是如何链条的以及SpringBoot相关配置
-原理图
-实际使用1.
-
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/27</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "java">java</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "spring">spring</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "springcloud">springcloud</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href = "/2019/08/27/2019-08-26-SpringMVC原理简介/" >
             
                 <span>Spring MVC原理简介</span>
         </a>
         <div class="abstract-content">
-            Spring MVC原理简介一次请求处理过程
+            一次请求处理过程
 请求： 将请求提交给服务器，大多数框架都有一个调度程序（以servlet的形式）用来处理请求
 调用： DispatchServlet根据HTTP请求信息和Web应用程序配置将请求分配给适当的控制器
 服务调用：控制器与服务层交互
@@ -481,17 +445,53 @@ ajax调用
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/08/27/2019-08-27-SpringCloud/" >
+            
+                <span>Spring Cloud</span>
+        </a>
+        <div class="abstract-content">
+            前言: Spring Cloud是Netflix公司开发的一款微服务框架,今天在公司迁移项目时折腾SpringCloud配置折腾了一下午，所以在这里总结一下Spring Cloud的生产者和消费者是如何链条的以及SpringBoot相关配置
+原理图
+实际使用1.
+
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/27</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "spring">spring</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "springcloud">springcloud</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/08/25/2019-08-25-Mybatis/" >
             
                 <span> MyBatis在SpringBoot上的集成运用</span>
         </a>
         <div class="abstract-content">
-            MyBatis在SpringBoot上的集成运用前言: 最近做公司的项目时,用到的访问数据库CRUD框架为mybatis,实际使用起来经常踩坑，于是总结一下基本使用方法和踩过的坑
+            前言: 最近做公司的项目时,用到的访问数据库CRUD框架为mybatis,实际使用起来经常踩坑，于是总结一下基本使用方法和踩过的坑
 
 基本介绍：mybatis是一款基于JAVA JDBC API [^1] 的持久层框架,它支持将Java POJOs 映射成数据库中对应的记录
 
 [^1]:Java Database connection(java数据库连接)
-一. 添加依赖12345&lt;dependency&gt;  &lt;groupId&gt;org.mybatis&lt;/groupId&gt;  &lt;artifactId&gt...
+一. 添加依赖12345&lt;dependency&gt;  &lt;groupId&gt;org.mybatis&lt;/groupId&gt;  &lt;artifactId&gt;mybatis&lt;/artifactId&...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -522,7 +522,7 @@ ajax调用
                 <span>Java NIO底层原理</span>
         </a>
         <div class="abstract-content">
-            Java NIO底层原理前言：最近在看dubbo框架底层依赖协议时注意到了java NIO，由于操作系统和I/O相关的底层原理一直没有好好研究过，感到一头雾水，于是决定写篇博客学习一下
+            前言：最近在看dubbo框架底层依赖协议时注意到了java NIO，由于操作系统和I/O相关的底层原理一直没有好好研究过，感到一头雾水，于是决定写篇博客学习一下
 Java IO读写原理
 read系统调用
 是把数据从内核缓冲区复制到进程缓冲区
@@ -550,7 +550,7 @@ Linux通过网卡，读取客户断的请求数据，将数据读取到内核缓
 
 服务器端业务处理
 
-Java服务端...
+Java服务端在自己的用户空间中，处理...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -581,11 +581,11 @@ Java服务端...
                 <span>微服务:SpringCloudVsDubbo</span>
         </a>
         <div class="abstract-content">
-            微服务:SpringCloudVsDubbo基本介绍
+            基本介绍
  微服务架构是互联网很热门的话题，是互联网技术发展的必然结果。它提倡将单一应用程序划分成一组小的服务，服务之间互相协调、互相配合，为用户提供最终价值。虽然微服务架构没有公认的技术标准和规范或者草案，但业界已经有一些很有影响力的开源微服务架构框架提供了微服务的关键思路，例如Dubbo和Spring Cloud。各大互联网公司也有自研的微服务框架，但其模式都于这二者相差不大。
 
 微服务主要的优势如下：
-降低复杂度将原来偶合在一起的复杂业务拆分为单个服务，规避了原本复杂度无止境的积累。每一个微服务专注于单一功能，并通过定义良好的接口清晰表述...
+降低复杂度将原来偶合在一起的复杂业务拆分为单个服务，规避了原本复杂度无止境的积累。每一个微服务专注于单一功能，并通过定义良好的接口清晰表述服务边界。每个服务开发者只专注服务本身，通过...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -835,44 +835,6 @@ Java服务端...
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 13
@@ -920,12 +882,12 @@ Java服务端...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2019/08/27/2019-08-26-SpringMVC原理简介/" >Spring MVC原理简介</a>
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2019/08/27/2019-08-27-SpringCloud/" >Spring Cloud</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2019/08/27/2019-08-27-SpringCloud/" >Spring Cloud</a>
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2019/08/27/2019-08-26-SpringMVC原理简介/" >Spring MVC原理简介</a>
         </li>
     
     
@@ -963,6 +925,10 @@ Java服务端...
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
+    
+        <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
+    
         <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
     
         <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
@@ -971,25 +937,21 @@ Java服务端...
     
         <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
     
-        <span class="sidebar-tag-name" data-tags="myBatis"><span class="iconfont-archer">&#xe606;</span>myBatis</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
-    
-        <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
-    
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
-    
-        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
+        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+    
         <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
-        <span class="sidebar-tag-name" data-tags="rmi"><span class="iconfont-archer">&#xe606;</span>rmi</span>
+        <span class="sidebar-tag-name" data-tags="myBatis"><span class="iconfont-archer">&#xe606;</span>myBatis</span>
     
         <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
     
         <span class="sidebar-tag-name" data-tags="ioc"><span class="iconfont-archer">&#xe606;</span>ioc</span>
+    
+        <span class="sidebar-tag-name" data-tags="rmi"><span class="iconfont-archer">&#xe606;</span>rmi</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1024,11 +986,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
+    
         <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
     
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
-    
-        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
