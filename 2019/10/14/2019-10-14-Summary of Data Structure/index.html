@@ -301,7 +301,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count word-count">854</span>Reading time: <span class="post-count reading-time">5 min</span></span>
+                        <span>Word count: <span class="post-count word-count">853</span>Reading time: <span class="post-count reading-time">5 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -495,12 +495,8 @@ height:50vh;
 <td align="center">Delete</td>
 <td align="center">O(N)</td>
 </tr>
-<tr>
-<td align="center">### Implementation in different language</td>
-<td align="center"></td>
-</tr>
 </tbody></table>
-<h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><ol>
+<h3 id="Implementation-in-different-language"><a href="#Implementation-in-different-language" class="headerlink" title="Implementation in different language"></a>Implementation in different language</h3><h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><ol>
 <li><p>Array—Fixed Size In Stack<br>Example:</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> arr[]=&#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">40</span>,<span class="number">60</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> *p=arr;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;arr&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;arr+<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;*p&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;*(p+<span class="number">2</span>)&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;p[<span class="number">3</span>]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;&amp;p&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
@@ -554,7 +550,7 @@ height:50vh;
 <td align="center">O(N)</td>
 </tr>
 </tbody></table>
-<h3 id="Implementation-in-different-language"><a href="#Implementation-in-different-language" class="headerlink" title="Implementation in different language"></a>Implementation in different language</h3><h4 id="C-1"><a href="#C-1" class="headerlink" title="C++"></a>C++</h4><p>Example:</p>
+<h3 id="Implementation-in-different-language-1"><a href="#Implementation-in-different-language-1" class="headerlink" title="Implementation in different language"></a>Implementation in different language</h3><h4 id="C-1"><a href="#C-1" class="headerlink" title="C++"></a>C++</h4><p>Example:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> data;</span><br><span class="line">    node *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">linked_list</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    node *head,*tail;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    linked_list()</span><br><span class="line">    &#123;</span><br><span class="line">        head = <span class="literal">NULL</span>;</span><br><span class="line">        tail = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add_node</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        node *tmp = <span class="keyword">new</span> node;</span><br><span class="line">        tmp-&gt;data = n;</span><br><span class="line">        tmp-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(head == <span class="literal">NULL</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            head = tmp;</span><br><span class="line">            tail = tmp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            tail-&gt;next = tmp;</span><br><span class="line">            tail = tail-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <h4 id="Java-1"><a href="#Java-1" class="headerlink" title="Java"></a>Java</h4><p>Predefined LinkedList that implements List interface</p>
@@ -714,7 +710,35 @@ height:50vh;
 <li>Every path from a node to any of its descendent null node has the same number of black node<br><img src="https://yifanyu123.github.io/assets/image/rbtree.png" alt="&quot;rbtree.png&quot;"></li>
 </ul>
 <h2 id="Graph"><a href="#Graph" class="headerlink" title="Graph"></a>Graph</h2><p><img src="https://yifanyu123.github.io/assets/image/UnionFind.png" alt="&quot;UnionFind&quot;"><br>With M union and find Operation on N graph Node objects</p>
-<p>Time Complexity<br>| type of union-find |Worst Time Complexity  |<br>| :—: | :—: |<br>|Quick-find | MN<br>|Quick-union|MN<br>|weighted Union|N+MlogN<br>|Path Compression|N+MlogN<br>|weighted+Path|(M+N)log* N</p>
+<p>Time Complexity</p>
+<table>
+<thead>
+<tr>
+<th align="center">type of union-find</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Quick-find</td>
+<td align="center">MN</td>
+</tr>
+<tr>
+<td align="center">Quick-union</td>
+<td align="center">MN</td>
+</tr>
+<tr>
+<td align="center">weighted Union</td>
+<td align="center">N+MlogN</td>
+</tr>
+<tr>
+<td align="center">Path Compression</td>
+<td align="center">N+MlogN</td>
+</tr>
+<tr>
+<td align="center">weighted+Path</td>
+<td align="center">(M+N)log* N</td>
+</tr>
+</tbody></table>
 
     </article>
     <!-- license  -->
@@ -723,7 +747,7 @@ height:50vh;
             <p>Author：<a href="http://yoursite.com"></a>
             <p>原文链接：<a href="http://yoursite.com/2019/10/14/2019-10-14-Summary of Data Structure/">http://yoursite.com/2019/10/14/2019-10-14-Summary of Data Structure/</a>
             <p>发表日期：<a href="http://yoursite.com/2019/10/14/2019-10-14-Summary of Data Structure/">October 14th 2019, 12:00:00 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/10/14/2019-10-14-Summary of Data Structure/">October 14th 2019, 1:51:26 am</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/10/14/2019-10-14-Summary of Data Structure/">October 14th 2019, 2:12:45 am</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -872,7 +896,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Array"><span class="toc-number">1.</span> <span class="toc-text">Array</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure"><span class="toc-number">1.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Member-Function-Time-Complexity"><span class="toc-number">1.2.</span> <span class="toc-text">Member Function Time Complexity</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C"><span class="toc-number">1.2.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java"><span class="toc-number">1.2.2.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python"><span class="toc-number">1.2.3.</span> <span class="toc-text">Python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linked-List"><span class="toc-number">2.</span> <span class="toc-text">Linked List</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-1"><span class="toc-number">2.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Member-Function-Time-Complexity-1"><span class="toc-number">2.2.</span> <span class="toc-text">Member Function Time Complexity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation-in-different-language"><span class="toc-number">2.3.</span> <span class="toc-text">Implementation in different language</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python-1"><span class="toc-number">2.3.3.</span> <span class="toc-text">Python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Stack"><span class="toc-number">3.</span> <span class="toc-text">Stack</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-2"><span class="toc-number">3.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Member-Function-Time-Complexity-2"><span class="toc-number">3.2.</span> <span class="toc-text">Member Function Time Complexity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation-in-Different-Language"><span class="toc-number">3.3.</span> <span class="toc-text">Implementation in Different Language</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python-2"><span class="toc-number">3.3.3.</span> <span class="toc-text">Python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue"><span class="toc-number">4.</span> <span class="toc-text">Queue</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-3"><span class="toc-number">4.1.</span> <span class="toc-text">Structure</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Heap"><span class="toc-number">5.</span> <span class="toc-text">Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Time-Complexity"><span class="toc-number">5.1.</span> <span class="toc-text">Time Complexity</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">6.</span> <span class="toc-text">Map</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-4"><span class="toc-number">6.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashing"><span class="toc-number">6.2.</span> <span class="toc-text">Hashing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation"><span class="toc-number">6.3.</span> <span class="toc-text">Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tree"><span class="toc-number">7.</span> <span class="toc-text">Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Graph"><span class="toc-number">8.</span> <span class="toc-text">Graph</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Array"><span class="toc-number">1.</span> <span class="toc-text">Array</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure"><span class="toc-number">1.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Member-Function-Time-Complexity"><span class="toc-number">1.2.</span> <span class="toc-text">Member Function Time Complexity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation-in-different-language"><span class="toc-number">1.3.</span> <span class="toc-text">Implementation in different language</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C"><span class="toc-number">1.3.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java"><span class="toc-number">1.3.2.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python"><span class="toc-number">1.3.3.</span> <span class="toc-text">Python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linked-List"><span class="toc-number">2.</span> <span class="toc-text">Linked List</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-1"><span class="toc-number">2.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Member-Function-Time-Complexity-1"><span class="toc-number">2.2.</span> <span class="toc-text">Member Function Time Complexity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation-in-different-language-1"><span class="toc-number">2.3.</span> <span class="toc-text">Implementation in different language</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python-1"><span class="toc-number">2.3.3.</span> <span class="toc-text">Python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Stack"><span class="toc-number">3.</span> <span class="toc-text">Stack</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-2"><span class="toc-number">3.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Member-Function-Time-Complexity-2"><span class="toc-number">3.2.</span> <span class="toc-text">Member Function Time Complexity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation-in-Different-Language"><span class="toc-number">3.3.</span> <span class="toc-text">Implementation in Different Language</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python-2"><span class="toc-number">3.3.3.</span> <span class="toc-text">Python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue"><span class="toc-number">4.</span> <span class="toc-text">Queue</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-3"><span class="toc-number">4.1.</span> <span class="toc-text">Structure</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Heap"><span class="toc-number">5.</span> <span class="toc-text">Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Time-Complexity"><span class="toc-number">5.1.</span> <span class="toc-text">Time Complexity</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">6.</span> <span class="toc-text">Map</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Structure-4"><span class="toc-number">6.1.</span> <span class="toc-text">Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashing"><span class="toc-number">6.2.</span> <span class="toc-text">Hashing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation"><span class="toc-number">6.3.</span> <span class="toc-text">Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tree"><span class="toc-number">7.</span> <span class="toc-text">Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Graph"><span class="toc-number">8.</span> <span class="toc-text">Graph</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -1130,13 +1154,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
-    
-        <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
-    
         <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
     
         <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
+    
+        <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
     
         <span class="sidebar-tag-name" data-tags="IO"><span class="iconfont-archer">&#xe606;</span>IO</span>
     
@@ -1144,11 +1168,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
-        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
-        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
     
         <span class="sidebar-tag-name" data-tags="data structure"><span class="iconfont-archer">&#xe606;</span>data structure</span>
     
@@ -1168,9 +1192,9 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="myBatis"><span class="iconfont-archer">&#xe606;</span>myBatis</span>
     
-        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
-    
         <span class="sidebar-tag-name" data-tags="ioc"><span class="iconfont-archer">&#xe606;</span>ioc</span>
+    
+        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
     
         <span class="sidebar-tag-name" data-tags="rmi"><span class="iconfont-archer">&#xe606;</span>rmi</span>
     
@@ -1207,11 +1231,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
-    
         <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
     
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
+    
+        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
         <span class="sidebar-category-name" data-categories="Data-Structure"><span class="iconfont-archer">&#xe60a;</span>Data-Structure</span>
     
