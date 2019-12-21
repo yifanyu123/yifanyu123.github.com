@@ -13,9 +13,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content>
+    <meta name="author" content="YYF">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content>
+    <meta name="copyright" content="YYF">
     
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -229,14 +229,14 @@
     
     <div class="banner">
             <div class="blog-title">
-                <a href="/" >小刺猬的个人博客</a>
+                <a href="/" >YYF Blog</a>
             </div>
             <div class="post-title">
                 <a href="#" class="post-name">Java NIO底层原理</a>
             </div>
     </div>
     
-    <a class="home-link" href=/>小刺猬的个人博客</a>
+    <a class="home-link" href=/>YYF Blog</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -289,7 +289,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count word-count">789</span>Reading time: <span class="post-count reading-time">2 min</span></span>
+                        <span>word_count: <span class="post-count word-count">789</span>reading_time: <span class="post-count reading-time">2 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -419,6 +419,7 @@ height:50vh;
             <main class="main post-page">
     <article class="article-entry">
         <p>前言：最近在看dubbo框架底层依赖协议时注意到了java NIO，由于操作系统和I/O相关的底层原理一直没有好好研究过，感到一头雾水，于是决定写篇博客学习一下</p>
+<a id="more"></a>
 <h2 id="Java-IO读写原理"><a href="#Java-IO读写原理" class="headerlink" title="Java IO读写原理"></a>Java IO读写原理</h2><ul>
 <li>read系统调用<blockquote>
 <p>是把数据从内核缓冲区复制到进程缓冲区</p>
@@ -460,8 +461,8 @@ height:50vh;
 </ul>
 </li>
 </ol>
-<h2 id="同步阻塞"><a href="#同步阻塞" class="headerlink" title="同步阻塞"></a>同步阻塞</h2><p><img src="https://yifanyu123.github.io/assets/%E5%90%8C%E6%AD%A5%E9%98%BB%E5%A1%9E.png" alt="&quot;同步阻塞&quot;"><br>用户线程在系统调用的整个IO过程中都是阻塞的（1.等待数据到达内核缓冲区 2.将数据拷贝）</p>
-<h2 id="同步非阻塞"><a href="#同步非阻塞" class="headerlink" title="同步非阻塞"></a>同步非阻塞</h2><p><img src="https://yifanyu123.github.io/assets/%E5%90%8C%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E.png" alt="&quot;同步非阻塞&quot;"><br>用户线程在系统调用的</p>
+<h2 id="同步阻塞"><a href="#同步阻塞" class="headerlink" title="同步阻塞"></a>同步阻塞</h2><p><img src="/image/%E5%90%8C%E6%AD%A5%E9%98%BB%E5%A1%9E.png" alt="&quot;同步阻塞&quot;"><br>用户线程在系统调用的整个IO过程中都是阻塞的（1.等待数据到达内核缓冲区 2.将数据拷贝）</p>
+<h2 id="同步非阻塞"><a href="#同步非阻塞" class="headerlink" title="同步非阻塞"></a>同步非阻塞</h2><p><img src="/image/%E5%90%8C%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E.png" alt="&quot;同步非阻塞&quot;"><br>用户线程在系统调用的</p>
 <ol>
 <li>等待数据到达内核缓冲区(kernal buffer) 非阻塞</li>
 </ol>
@@ -472,25 +473,25 @@ height:50vh;
 <ol start="2">
 <li>拷贝数据到用户缓冲区(user buffer) 阻塞</li>
 </ol>
-<h2 id="多路复用模型"><a href="#多路复用模型" class="headerlink" title="多路复用模型"></a>多路复用模型</h2><p><img src="https://yifanyu123.github.io/assets/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png" alt="&quot;多路复用&quot;"></p>
+<h2 id="多路复用模型"><a href="#多路复用模型" class="headerlink" title="多路复用模型"></a>多路复用模型</h2><p><img src="/image/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png" alt="&quot;多路复用&quot;"></p>
 <ol>
 <li>进行select/epoll系统调用，查询可以读的连接。kernel会查询所有select的可查询socket列表，当任何一个socket中的数据准备好了，select就会返回。<br>当用户进程调用了select，那么整个线程会被block（阻塞掉）。</li>
 <li>用户线程获得了目标连接后，发起read系统调用，用户线程阻塞。内核开始复制数据。它就会将数据从kernel内核缓冲区，拷贝到用户缓冲区（用户内存），然后kernel返回结果。</li>
 <li>用户线程才解除block的状态，用户线程终于真正读取到数据，继续执行。</li>
 </ol>
-<h3 id="多路复用的两种模式"><a href="#多路复用的两种模式" class="headerlink" title="多路复用的两种模式"></a>多路复用的两种模式</h3><p><img src="https://yifanyu123.github.io/assets/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A81.png" alt="&quot;多路复用1&quot;"><br><img src="https://yifanyu123.github.io/assets/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A82.png" alt="&quot;多路复用2&quot;"></p>
+<h3 id="多路复用的两种模式"><a href="#多路复用的两种模式" class="headerlink" title="多路复用的两种模式"></a>多路复用的两种模式</h3><p><img src="/image/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A81.png" alt="&quot;多路复用1&quot;"><br><img src="/image/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A82.png" alt="&quot;多路复用2&quot;"></p>
 <p>优点: 用select/epoll的优势在于，它可以同时处理成千上万个连接（connection）。与一条线程维护一个连接相比，I/O多路复用技术的最大优势是：系统不必创建线程，也不必维护这些线程，从而大大减小了系统的开销</p>
-<h2 id="异步非阻塞"><a href="#异步非阻塞" class="headerlink" title="异步非阻塞"></a>异步非阻塞</h2><p><img src="https://yifanyu123.github.io/assets/%E5%BC%82%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E.png" alt="&quot;异步非阻塞&quot;"></p>
+<h2 id="异步非阻塞"><a href="#异步非阻塞" class="headerlink" title="异步非阻塞"></a>异步非阻塞</h2><p><img src="/image/%E5%BC%82%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E.png" alt="&quot;异步非阻塞&quot;"></p>
 <p>AIO的基本流程是：用户线程通过系统调用，告知kernel内核启动某个IO操作，用户线程返回。kernel内核在整个IO操作（包括数据准备、数据复制）完成后，通知用户程序，用户执行后续的业务操作。</p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
-            <p>Author：<a href="http://yoursite.com"></a>
-            <p>原文链接：<a href="http://yoursite.com/2019/08/24/2019-08-18-NIO/">http://yoursite.com/2019/08/24/2019-08-18-NIO/</a>
-            <p>发表日期：<a href="http://yoursite.com/2019/08/24/2019-08-18-NIO/">August 24th 2019, 12:00:00 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/08/24/2019-08-18-NIO/">September 14th 2019, 11:19:01 pm</a>
+            <p>author：<a href="http://yifanyu123.github.io">YYF</a>
+            <p>原文链接：<a href="http://yifanyu123.github.io/2019/08/24/2019-08-18-NIO/">http://yifanyu123.github.io/2019/08/24/2019-08-18-NIO/</a>
+            <p>发表日期：<a href="http://yifanyu123.github.io/2019/08/24/2019-08-18-NIO/">August 24th 2019, 3:00:00 pm</a>
+            <p>更新日期：<a href="http://yifanyu123.github.io/2019/08/24/2019-08-18-NIO/">October 14th 2019, 7:46:33 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -515,21 +516,6 @@ height:50vh;
     </ul>
     <!-- 评论插件 -->
     <!-- 来必力City版安装代码 -->
-
-    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNDI2OS8xMDgwNg==>
-        <script type="text/javascript">
-            (function (d, s) {
-                var j, e = d.getElementsByTagName(s)[0];
-                if (typeof LivereTower === 'function') { return; }
-                j = d.createElement(s);
-                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-                j.async = true;
-
-                e.parentNode.insertBefore(j, e);
-            })(document, 'script');
-        </script>
-        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
-    </div>
 
 <!-- City版安装代码已完成 -->
     
@@ -902,13 +888,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
-    
-        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
-    
         <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
     
         <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
+    
+        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
+    
+        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
     
         <span class="sidebar-tag-name" data-tags="IO"><span class="iconfont-archer">&#xe606;</span>IO</span>
     
@@ -916,11 +902,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
-        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
-        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="data structure"><span class="iconfont-archer">&#xe606;</span>data structure</span>
     
@@ -979,11 +965,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
+    
         <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
     
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
-    
-        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
         <span class="sidebar-category-name" data-categories="Data-Structure"><span class="iconfont-archer">&#xe60a;</span>Data-Structure</span>
     
@@ -996,7 +982,7 @@ jsonContent:
     <script>
     var siteMeta = {
         root: "/",
-        author: ""
+        author: "YYF"
     }
 </script>
     <!-- CDN failover -->

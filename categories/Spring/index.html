@@ -13,9 +13,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content>
+    <meta name="author" content="YYF">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content>
+    <meta name="copyright" content="YYF">
     
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -225,7 +225,7 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
-    <a class="home-link" href=/>小刺猬的个人博客</a>
+    <a class="home-link" href=/>YYF Blog</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -366,8 +366,9 @@
                 <span>SpringIOC容器的启动流程(一)</span>
         </a>
         <div class="abstract-content">
-            前言:Spring做为JAVA企业级应用中最为热门的框架,为开发人员提供了一系列方便易用的组件,使开发者可以集中于业务逻辑的开发，而不必关心太多底层环境的部署。我第一次接触这个框架是做校内的一个web项目，当时只是简单机械的运用了spring-boot 中的一些功能，正式开始了解框架背后的原理是今年暑假实习。一开始，我被Spring官方晦涩的文档所困住，理不清思绪，跨不出学习的第一步。
-稻圣和夫曾经说过,真理之布由一根纱线织成,把事情看得越单纯，就越接近真相，也就越接近真理。一句话概括，Spring是一个轻量级控制反转(IoC)和面向切面(AOP)的容器框架。因此,我们不妨从Spring...
+            <p>前言:Spring做为JAVA企业级应用中最为热门的框架,为开发人员提供了一系列方便易用的组件,使开发者可以集中于业务逻辑的开发，而不必关心太多底层环境的部署。我第一次接触这个框架是做校内的一个web项目，当时只是简单机械的运用了spring-boot 中的一些功能，正式开始了解框架背后的原理是今年暑假实习。一开始，我被Spring官方晦涩的文档所困住，理不清思绪，跨不出学习的第一步。</p>
+<p>稻圣和夫曾经说过,真理之布由一根纱线织成,把事情看得越单纯，就越接近真相，也就越接近真理。一句话概括，Spring是一个轻量级控制反转(IoC)和面向切面(AOP)的容器框架。因此,我们不妨从Spring框架最核心的两个思想IOC,AOP开始，慢慢探寻框架背后的秘密。</p>
+<p>本篇博客将以一个简单的Spring应用程序为例，介绍Spring的IOC容器启动流程</p>
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -477,14 +478,7 @@ org.springframework.web.bind.annotationreference: https://www.baeldung.com/sprin
                 <span>Spring Framework</span>
         </a>
         <div class="abstract-content">
-            
-Ioc Container(DI)reference:https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html
-def:objects define their dependencies only through constructor arguments
-org.springframework.beans
-org.springframework.context
-
-
-A bean is an object that is instantiated, assemble...
+            <p><img src="/image/SpringFramework.jpg" alt="&quot;概览&quot;"></p>
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -848,13 +842,13 @@ A bean is an object that is instantiated, assemble...
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
-    
-        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
-    
         <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
     
         <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
+    
+        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
+    
+        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
     
         <span class="sidebar-tag-name" data-tags="IO"><span class="iconfont-archer">&#xe606;</span>IO</span>
     
@@ -862,11 +856,11 @@ A bean is an object that is instantiated, assemble...
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
-        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
-        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="data structure"><span class="iconfont-archer">&#xe606;</span>data structure</span>
     
@@ -925,11 +919,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
+    
         <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
     
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
-    
-        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
         <span class="sidebar-category-name" data-categories="Data-Structure"><span class="iconfont-archer">&#xe60a;</span>Data-Structure</span>
     
@@ -942,7 +936,7 @@ jsonContent:
     <script>
     var siteMeta = {
         root: "/",
-        author: ""
+        author: "YYF"
     }
 </script>
     <!-- CDN failover -->

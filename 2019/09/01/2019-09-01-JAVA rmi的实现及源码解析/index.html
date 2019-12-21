@@ -13,9 +13,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content>
+    <meta name="author" content="YYF">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content>
+    <meta name="copyright" content="YYF">
     
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -229,14 +229,14 @@
     
     <div class="banner">
             <div class="blog-title">
-                <a href="/" >小刺猬的个人博客</a>
+                <a href="/" >YYF Blog</a>
             </div>
             <div class="post-title">
                 <a href="#" class="post-name">JAVA rmi的实现及源码解析</a>
             </div>
     </div>
     
-    <a class="home-link" href=/>小刺猬的个人博客</a>
+    <a class="home-link" href=/>YYF Blog</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -289,7 +289,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count word-count">1.7k</span>Reading time: <span class="post-count reading-time">7 min</span></span>
+                        <span>word_count: <span class="post-count word-count">1.7k</span>reading_time: <span class="post-count reading-time">7 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -419,7 +419,8 @@ height:50vh;
             <main class="main post-page">
     <article class="article-entry">
         <p>前言:rmi(remote method invocation)是java官方的远程调用的是一种实现方式，它使得我们能像调用本地服务一般调用远程服务</p>
-<p><img src="https://yifanyu123.github.io/assets/rmi.png" alt="rmi"></p>
+<a id="more"></a>
+<p><img src="/image/rmi.png" alt="rmi"></p>
 <h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="1-客户端调用"><a href="#1-客户端调用" class="headerlink" title="1. 客户端调用"></a>1. 客户端调用</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TODO 类描述</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> xcw</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        String url = <span class="string">"rmi://localhost:8888/"</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 在RMI服务注册表中查找名称为server-service的对象，并调用其上的方法</span></span><br><span class="line">            <span class="comment">//Naming.lookup(registry url+service name)将会返回Remote接口</span></span><br><span class="line">            ServerService service = (ServerService) Naming.lookup(url + <span class="string">"server-service"</span>);</span><br><span class="line"></span><br><span class="line">            Class stubClass = service.getClass();</span><br><span class="line">            System.out.println(service + <span class="string">" 是 "</span> + stubClass.getName() + <span class="string">" 的实例！"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获得本底存根已实现的接口类型</span></span><br><span class="line">            Class[] interfaces = stubClass.getInterfaces();</span><br><span class="line">            <span class="keyword">for</span> (Class c : interfaces) &#123;</span><br><span class="line">                System.out.println(<span class="string">"存根类实现了 "</span> + c.getName() + <span class="string">" 接口！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(service.service());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><h5 id="1-在RMI服务注册表中查找服务接口-Naming-lookup-registry-url-service-name-将会返回"><a href="#1-在RMI服务注册表中查找服务接口-Naming-lookup-registry-url-service-name-将会返回" class="headerlink" title="1. 在RMI服务注册表中查找服务接口, Naming.lookup(registry url+service name)将会返回"></a>1. 在RMI服务注册表中查找服务接口, Naming.lookup(registry url+service name)将会返回</h5><p>Proxy[ServerService,RemoteObjectInvocationHandler[UnicastRef [liveRef: [endpoint:<a href="remote">192.168.1.103:49471</a>,objID:[-79051ded:16cec85dc68:-7fff, -7771089289704678398]]]]]</p>
@@ -469,10 +470,10 @@ height:50vh;
     <!-- license  -->
     
         <div class="license-wrapper">
-            <p>Author：<a href="http://yoursite.com"></a>
-            <p>原文链接：<a href="http://yoursite.com/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">http://yoursite.com/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/</a>
-            <p>发表日期：<a href="http://yoursite.com/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">September 1st 2019, 12:00:00 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">September 14th 2019, 11:19:39 pm</a>
+            <p>author：<a href="http://yifanyu123.github.io">YYF</a>
+            <p>原文链接：<a href="http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/</a>
+            <p>发表日期：<a href="http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">September 1st 2019, 3:00:00 pm</a>
+            <p>更新日期：<a href="http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">October 14th 2019, 7:46:27 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -497,21 +498,6 @@ height:50vh;
     </ul>
     <!-- 评论插件 -->
     <!-- 来必力City版安装代码 -->
-
-    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNDI2OS8xMDgwNg==>
-        <script type="text/javascript">
-            (function (d, s) {
-                var j, e = d.getElementsByTagName(s)[0];
-                if (typeof LivereTower === 'function') { return; }
-                j = d.createElement(s);
-                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-                j.async = true;
-
-                e.parentNode.insertBefore(j, e);
-            })(document, 'script');
-        </script>
-        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
-    </div>
 
 <!-- City版安装代码已完成 -->
     
@@ -884,13 +870,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
-    
-        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
-    
         <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
     
         <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
+    
+        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
+    
+        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
     
         <span class="sidebar-tag-name" data-tags="IO"><span class="iconfont-archer">&#xe606;</span>IO</span>
     
@@ -898,11 +884,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
-        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
-        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="data structure"><span class="iconfont-archer">&#xe606;</span>data structure</span>
     
@@ -961,11 +947,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
+    
         <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
     
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
-    
-        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
         <span class="sidebar-category-name" data-categories="Data-Structure"><span class="iconfont-archer">&#xe60a;</span>Data-Structure</span>
     
@@ -978,7 +964,7 @@ jsonContent:
     <script>
     var siteMeta = {
         root: "/",
-        author: ""
+        author: "YYF"
     }
 </script>
     <!-- CDN failover -->

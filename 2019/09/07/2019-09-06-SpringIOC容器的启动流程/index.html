@@ -13,9 +13,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content>
+    <meta name="author" content="YYF">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content>
+    <meta name="copyright" content="YYF">
     
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -229,14 +229,14 @@
     
     <div class="banner">
             <div class="blog-title">
-                <a href="/" >小刺猬的个人博客</a>
+                <a href="/" >YYF Blog</a>
             </div>
             <div class="post-title">
                 <a href="#" class="post-name">SpringIOC容器的启动流程(一)</a>
             </div>
     </div>
     
-    <a class="home-link" href=/>小刺猬的个人博客</a>
+    <a class="home-link" href=/>YYF Blog</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -291,7 +291,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count word-count">1.3k</span>Reading time: <span class="post-count reading-time">5 min</span></span>
+                        <span>word_count: <span class="post-count word-count">1.3k</span>reading_time: <span class="post-count reading-time">5 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -423,6 +423,7 @@ height:50vh;
         <p>前言:Spring做为JAVA企业级应用中最为热门的框架,为开发人员提供了一系列方便易用的组件,使开发者可以集中于业务逻辑的开发，而不必关心太多底层环境的部署。我第一次接触这个框架是做校内的一个web项目，当时只是简单机械的运用了spring-boot 中的一些功能，正式开始了解框架背后的原理是今年暑假实习。一开始，我被Spring官方晦涩的文档所困住，理不清思绪，跨不出学习的第一步。</p>
 <p>稻圣和夫曾经说过,真理之布由一根纱线织成,把事情看得越单纯，就越接近真相，也就越接近真理。一句话概括，Spring是一个轻量级控制反转(IoC)和面向切面(AOP)的容器框架。因此,我们不妨从Spring框架最核心的两个思想IOC,AOP开始，慢慢探寻框架背后的秘密。</p>
 <p>本篇博客将以一个简单的Spring应用程序为例，介绍Spring的IOC容器启动流程</p>
+<a id="more"></a>
 <h2 id="IOC容器启动步骤概括"><a href="#IOC容器启动步骤概括" class="headerlink" title="IOC容器启动步骤概括"></a>IOC容器启动步骤概括</h2><ol>
 <li>定位配置文件(xml或configuration Class)</li>
 <li>加载配置文件获取BeanDefinition</li>
@@ -453,7 +454,7 @@ height:50vh;
 <h2 id="从源码分析IOC容器启动"><a href="#从源码分析IOC容器启动" class="headerlink" title="从源码分析IOC容器启动"></a>从源码分析IOC容器启动</h2><p>首先我们来看一看主程序里的这一行</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ApplicationContext ctx= <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"/app-context.xml"</span>);</span><br></pre></td></tr></table></figure>
 
-<p>短短的一行,确已经完成了IOC容器的启动,我们一会再去探寻这个构造函数到底做了什么,先来看看ApplicationContext究竟是什么<br><img src="https://yifanyu123.github.io/assets/BeanFactory.png" alt="&quot;ApplicationContext&quot;"></p>
+<p>短短的一行,确已经完成了IOC容器的启动,我们一会再去探寻这个构造函数到底做了什么,先来看看ApplicationContext究竟是什么<br><img src="/image/BeanFactory.png" alt="&quot;ApplicationContext&quot;"></p>
 <h3 id="BeanFactory-vs-ApplicationContext"><a href="#BeanFactory-vs-ApplicationContext" class="headerlink" title="BeanFactory vs  ApplicationContext"></a>BeanFactory vs  ApplicationContext</h3><h4 id="BeanFactory"><a href="#BeanFactory" class="headerlink" title="BeanFactory"></a>BeanFactory</h4><p>BeanFactory是我们的根容器,Bean的中央注册中心,提供了依赖注入,ApplicationContext继承了BeanFactory,一般我们不会直接操作BeanFactory,而都是直接和ApplicationContext打交道</p>
 <p>java doc上给出的BeanFactory的定义</p>
 <blockquote>
@@ -501,10 +502,10 @@ D-->E[finishRefresh]</pre>
     <!-- license  -->
     
         <div class="license-wrapper">
-            <p>Author：<a href="http://yoursite.com"></a>
-            <p>原文链接：<a href="http://yoursite.com/2019/09/07/2019-09-06-SpringIOC容器的启动流程/">http://yoursite.com/2019/09/07/2019-09-06-SpringIOC容器的启动流程/</a>
-            <p>发表日期：<a href="http://yoursite.com/2019/09/07/2019-09-06-SpringIOC容器的启动流程/">September 7th 2019, 12:00:00 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/09/07/2019-09-06-SpringIOC容器的启动流程/">September 14th 2019, 11:19:52 pm</a>
+            <p>author：<a href="http://yifanyu123.github.io">YYF</a>
+            <p>原文链接：<a href="http://yifanyu123.github.io/2019/09/07/2019-09-06-SpringIOC容器的启动流程/">http://yifanyu123.github.io/2019/09/07/2019-09-06-SpringIOC容器的启动流程/</a>
+            <p>发表日期：<a href="http://yifanyu123.github.io/2019/09/07/2019-09-06-SpringIOC容器的启动流程/">September 7th 2019, 3:00:00 pm</a>
+            <p>更新日期：<a href="http://yifanyu123.github.io/2019/09/07/2019-09-06-SpringIOC容器的启动流程/">October 14th 2019, 7:46:24 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -529,21 +530,6 @@ D-->E[finishRefresh]</pre>
     </ul>
     <!-- 评论插件 -->
     <!-- 来必力City版安装代码 -->
-
-    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNDI2OS8xMDgwNg==>
-        <script type="text/javascript">
-            (function (d, s) {
-                var j, e = d.getElementsByTagName(s)[0];
-                if (typeof LivereTower === 'function') { return; }
-                j = d.createElement(s);
-                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-                j.async = true;
-
-                e.parentNode.insertBefore(j, e);
-            })(document, 'script');
-        </script>
-        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
-    </div>
 
 <!-- City版安装代码已完成 -->
     
@@ -916,13 +902,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
-    
-        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
-    
         <span class="sidebar-tag-name" data-tags="spring-boot"><span class="iconfont-archer">&#xe606;</span>spring-boot</span>
     
         <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
+    
+        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
+    
+        <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
     
         <span class="sidebar-tag-name" data-tags="IO"><span class="iconfont-archer">&#xe606;</span>IO</span>
     
@@ -930,11 +916,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
-        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
-        <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="data structure"><span class="iconfont-archer">&#xe606;</span>data structure</span>
     
@@ -993,11 +979,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
+    
         <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
     
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
-    
-        <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
         <span class="sidebar-category-name" data-categories="Data-Structure"><span class="iconfont-archer">&#xe60a;</span>Data-Structure</span>
     
@@ -1010,7 +996,7 @@ jsonContent:
     <script>
     var siteMeta = {
         root: "/",
-        author: ""
+        author: "YYF"
     }
 </script>
     <!-- CDN failover -->
