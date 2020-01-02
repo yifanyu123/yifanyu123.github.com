@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Java可重入读写锁源码分析]]></title>
+    <url>%2F2020%2F01%2F02%2F2020-01-02-Java%E5%8F%AF%E9%87%8D%E5%85%A5%E8%AF%BB%E5%86%99%E9%94%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%2F</url>
+    <content type="text"><![CDATA[What is a ReadWriteLockBasically, a ReadWriteLock is designed as a high-level locking mechanism that allows you to add thread-safety feature to a data structure while increasing throughput by allowing multiple threads to read the data concurrently and one thread to update the data exclusively. Performance Goal multiple threads can read the data at the same time as long as there is no thread updating the data Only one thread can update the data at one time, causing other threads(both read and write thread) block until the write lock is released if a thread attempts to update the data while other threads are reading the data, the write lock blocks until the read lock is released. Usage12345ReadWriteLock rwLock = new ReentrantReadWriteLock();//读锁Lock readLock=rwLock.readLock();//写锁Lock writeLock=rwLock.writeLock(); 123try &#123; readLock.lock();&#125;catch... Implementation Detail读写锁共用Sync中的state变量来管理锁状态，高16位为读锁状态，低16位为写锁状态 例子：0000000000000001 | 0000000000000000 0000000000000000 | 0000000000000001 ReadLock（读锁）lock（获取锁的逻辑）读锁获取锁的逻辑:如果写锁没有被其他线程占有，则成功获取锁，否则线程阻塞直到写锁被释放,具体如下 1. lock：调用sync的acquireShared()方法1public void lock() &#123;sync.acquireShared(1);&#125; 2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒1234public final void acquireShared(int arg) &#123; if (tryAcquireShared(arg) &lt; 0) doAcquireShared(arg);&#125; 3. tryAcquireShared: 如果当前锁写状态不为0且占锁线程非当前线程，那么返回占锁失败的值-1。 如果公平策略没有要求阻塞且重入数没有到达最大值，则直接尝试cas更新state。 a. 如果cas操作成功，有以下操作逻辑：1）首先，如果当前读锁计数为0那么就设置第一个读线程就是当前线程。 2）其次，当前线程和firstReader同一个线程，记录firstReaderHoldCount也就是第一个读线程读锁定次数。 3）最后，读锁数量不为0并且不为当前线程，获取当前线程ThreadLocal当中的读锁重入计数器。结果返回占锁成功的值1 b. 如果cas操作失败，有以下操作逻辑：通过fullTryAcquireShared尝试获取读锁，内部处理和tryAcquireShared过程相同 4. fullTryAcquireShared逻辑同上，只是加了一个无限循环尝试获取共享锁 5. doAcquireShareddoAcquireShared用来处理读锁获取失败后等待的逻辑,doAcquireShared的内部的自旋保证了线程被唤醒后再次判断是否是第一个节点并尝试获取锁，失败再次进入休眠 1）将当前线程封装成Shared Node类型加入CLH队列 1final Node node = addWaiter(Node.SHARED); 2)如果当前线程的Node节点是CLH队列的第一个节点则当前线程直接获取锁并开启读锁的扩散唤醒所有阻塞读锁的线程 1setHeadAndPropagate(node, r); 3)如果当前线程的Node节点不是CLH队列的第一个节点那么就通过parkAndCheckInterrupt进入休眠 123if (shouldParkAfterFailedAcquire(p, node) &amp;&amp; parkAndCheckInterrupt()) interrupted = true; unlock（释放锁的逻辑） ReadLock的unlock()方法调用sync.releaseShared(1)方法进行释放。 调用tryReleaseShared()方法尝试释放锁，如果释放成功，调用doReleaseShared尝试唤醒下一个节点 WriteLock（写锁）好累，下次再继续写:&gt;]]></content>
+      <categories>
+        <category>Java后端开发</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>juc</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Summary Of Data Structure]]></title>
     <url>%2F2019%2F10%2F14%2F2019-10-14-Summary%20of%20Data%20Structure%2F</url>
     <content type="text"><![CDATA[PrefaceSummarize what I learned from the data structure class and some of its implementation in different language. Category Array LinkedList Stack Queue Heap Map HashMap/Dictionary LinkedHashMap/OrderedDict Tree Binary Search Tree B tree B-tree B+tree B* tree Red-Black Tree Graph Quick Find Quick Union Weighted Quick Union Path Compression Weighted + Path ArrayStructure Member Function Time Complexity Action Worst Time Complexity Add O(1) Access By Index O(1) Search O(N) Insert O(N) Resize O(N) Delete O(N) Implementation in different languageC++ Array—Fixed Size In StackExample: 1234567891011121314#include &lt;iostream&gt;using namespace std;int main()&#123; int arr[]=&#123;10,20,40,60&#125;; int *p=arr; cout&lt;&lt;arr&lt;&lt;endl; cout&lt;&lt;arr+1&lt;&lt;endl; cout&lt;&lt;*p&lt;&lt;endl; cout&lt;&lt;*(p+2)&lt;&lt;endl; cout&lt;&lt;p[3]&lt;&lt;endl; cout&lt;&lt;&amp;p&lt;&lt;endl; return 0;&#125; Dynamic Array–Can Change Size During Runtime 12345678910int* a = NULL; // Pointer to int, initialize to nothing.int n; // Size needed for arraycin &gt;&gt; n; // Read in the sizea = new int[n]; // Allocate n ints and save ptr in a.for (int i=0; i&lt;n; i++) &#123; a[i] = 0; // Initialize all elements to zero.&#125;delete [] a; // When done, free memory pointed to by a.a = NULL; // Clear a to prevent using invalid memory reference. Java Plain ArrayMuch Similar As what is done in C++ ArrayList(Defined in JDK library) Def: An Object Class that implements List InterfaceNote that ArrayList used static function of Arrays to do the resize 12345678910public static &lt;T,U&gt; T[] copyOf(U[] original, int newLength, Class&lt;? extends T[]&gt; newType)&#123; @SuppressWarnings("unchecked") T[] copy = ((Object)newType == (Object)Object[].class) ? (T[]) new Object[newLength] : (T[]) Array.newInstance(newType.getComponentType(), newLength);System.arraycopy(original, 0, copy, 0, Math.min(original.length, newLength));return copy;&#125; The Java Virtual Machine used reflection mechanism to initialize a new Array object with the new size during runtime Copy the old element to the new Array PythonIn python, one can use list to serve as an array Linked ListStructure Member Function Time Complexity Action Worst Time Complexity Add O(1) Access By Index O(N) Search O(N) Insert O(N) Resize O(1) Delete O(N) Implementation in different languageC++Example: 123456789101112131415161718192021222324252627282930313233343536373839#include &lt;iostream&gt;using namespace std;struct node&#123; int data; node *next;&#125;;class linked_list&#123;private: node *head,*tail;public: linked_list() &#123; head = NULL; tail = NULL; &#125; void add_node(int n) &#123; node *tmp = new node; tmp-&gt;data = n; tmp-&gt;next = NULL; if(head == NULL) &#123; head = tmp; tail = tmp; &#125; else &#123; tail-&gt;next = tmp; tail = tail-&gt;next; &#125; &#125;&#125;; JavaPredefined LinkedList that implements List interface PythonDef Node 1234567891011121314class Node(object): def __init__(self, data=None, next_node=None): self.data = data self.next_node = next_node def get_data(self): return self.data def get_next(self): return self.next_node def set_next(self, new_next): self.next_node = new_next Def linkedList 12345class LinkedList(object): def __init__(self, head=None): self.head = head #...omitted# StackFILO: First In Last Out Structure Member Function Time Complexity Action Worst Time Complexity Push O(1) Pop O(1) Implementation in Different LanguageC++12345678910111213141516171819202122232425#ifndef STACK_H#define STACK_H#include &lt;cstdlib&gt;#include "node.h"using namespace std;template &lt;class T&gt;class stack&#123; public: // constructor stack(); // modifiers void push(T entry); void pop(); // accessors bool empty(); T top(); private: node&lt;T&gt;* head;&#125;;#include "stack.cpp"#endif JavaCan use ArrayList to serve as Stack PythonCan use list QueueFIFO:First In Last Out Structure Heap MinHeap MaxHeapCan be implemented using Array Time Complexity Action Worst Time Complexity Step insert O(logN) NA delete min O(logN) Switch min with the last entry and heapify Sort O(NlogN) build a min heap, delete min iteratively MapStructure Hashing Probing Linear Probing: When Collision happens, always find the nex spot Quadratic Probing: When Collision happens, always find the next i^2 spots Chained Hashing When collision happens, Link the same hash element Implementation Python Dict OrderedDict Java HashMap LinkedHashMap Tree Binary Tree Full Binary Tree Complete Binary Tree Consider the Skewed Case Action Worst Time Complexity insert O(N) delete O(N) search O(N) B tree（Self Balanced） Action Worst Time Complexity insert O(logN) delete O(logN) search O(logN) Difference Between different B tree B-tree: Self Balanced Search Tree B+tree: Only the leaf Node store the data, Non-leaf node only contains the key as road map B* tree: Contains the pointer to brother node Red-Black Tree Root of the tree is always black No adjacent red node Every path from a node to any of its descendent null node has the same number of black node GraphWith M union and find Operation on N graph Node objects Time Complexity type of union-find Worst Time Complexity Quick-find MN Quick-union MN weighted Union N+MlogN Path Compression N+MlogN weighted+Path (M+N)log* N]]></content>
@@ -82,19 +94,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Spring MVC原理简介]]></title>
-    <url>%2F2019%2F08%2F27%2F2019-08-26-SpringMVC%E5%8E%9F%E7%90%86%E7%AE%80%E4%BB%8B%2F</url>
-    <content type="text"><![CDATA[一次请求处理过程 请求： 将请求提交给服务器，大多数框架都有一个调度程序（以servlet的形式）用来处理请求 调用： DispatchServlet根据HTTP请求信息和Web应用程序配置将请求分配给适当的控制器 服务调用：控制器与服务层交互 填充模型：控制器使用从服务层获得的信息填充模型 创建视图：根据模型创建视图 响应 ajax调用 请求: 准备XMLHttpRequest并提交给服务器。 调度程序将请求分派给适当的控制器 响应: 控制器与服务层交互，相应数据将被格式化并发送到浏览器，此时并不涉及任何试图。浏览器接收数据并对现有视图进行部分更新]]></content>
-      <categories>
-        <category>Spring</category>
-      </categories>
-      <tags>
-        <tag>java</tag>
-        <tag>spring</tag>
-        <tag>mvc</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[Spring Cloud]]></title>
     <url>%2F2019%2F08%2F27%2F2019-08-27-SpringCloud%2F</url>
     <content type="text"><![CDATA[前言: Spring Cloud是Netflix公司开发的一款微服务框架,今天在公司迁移项目时折腾SpringCloud配置折腾了一下午，所以在这里总结一下Spring Cloud的生产者和消费者是如何链条的以及SpringBoot相关配置 原理图 实际使用1.]]></content>
@@ -105,6 +104,19 @@
         <tag>java</tag>
         <tag>spring</tag>
         <tag>springcloud</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Spring MVC原理简介]]></title>
+    <url>%2F2019%2F08%2F27%2F2019-08-26-SpringMVC%E5%8E%9F%E7%90%86%E7%AE%80%E4%BB%8B%2F</url>
+    <content type="text"><![CDATA[一次请求处理过程 请求： 将请求提交给服务器，大多数框架都有一个调度程序（以servlet的形式）用来处理请求 调用： DispatchServlet根据HTTP请求信息和Web应用程序配置将请求分配给适当的控制器 服务调用：控制器与服务层交互 填充模型：控制器使用从服务层获得的信息填充模型 创建视图：根据模型创建视图 响应 ajax调用 请求: 准备XMLHttpRequest并提交给服务器。 调度程序将请求分派给适当的控制器 响应: 控制器与服务层交互，相应数据将被格式化并发送到浏览器，此时并不涉及任何试图。浏览器接收数据并对现有视图进行部分更新]]></content>
+      <categories>
+        <category>Spring</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>spring</tag>
+        <tag>mvc</tag>
       </tags>
   </entry>
   <entry>

@@ -22,7 +22,7 @@
     <meta name="description" content>
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>xcw&#39;s blog</title>
+    <title>Java可重入读写锁源码分析 · xcw&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -218,12 +218,23 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >小刺猬的博客</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java可重入读写锁源码分析</a>
+            </div>
+    </div>
     
     <a class="home-link" href=/>小刺猬的博客</a>
 </header>
@@ -235,24 +246,76 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/assets/cover/12.JPG)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            Java可重入读写锁源码分析
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "juc">juc</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>word_count: <span class="post-count word-count">771</span>reading_time: <span class="post-count reading-time">3 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/01/02</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -353,43 +416,97 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/08/27/2019-08-27-SpringCloud/" >
-            
-                <span>Spring Cloud</span>
-        </a>
-        <div class="abstract-content">
-            <p>前言: Spring Cloud是Netflix公司开发的一款微服务框架,今天在公司迁移项目时折腾SpringCloud配置折腾了一下午，所以在这里总结一下Spring Cloud的生产者和消费者是如何链条的以及SpringBoot相关配置</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/27</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "java">java</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "spring">spring</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "springcloud">springcloud</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="What-is-a-ReadWriteLock"><a href="#What-is-a-ReadWriteLock" class="headerlink" title="What is a ReadWriteLock"></a>What is a ReadWriteLock</h2><p>Basically, a ReadWriteLock is designed as a high-level locking mechanism that allows you to add thread-safety feature to a data structure while increasing throughput by allowing multiple threads to read the data concurrently and one thread to update the data exclusively.</p>
+<h2 id="Performance-Goal"><a href="#Performance-Goal" class="headerlink" title="Performance Goal"></a>Performance Goal</h2><ul>
+<li>multiple threads can read the data at the same time as long as there is no thread updating the data</li>
+<li>Only one thread can update the data at one time, causing other threads(both read and write thread) block until the write lock is released</li>
+<li>if a thread attempts to update the data while other threads are reading the data, the write lock blocks until the read lock is released.</li>
+</ul>
+<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ReadWriteLock rwLock = <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line"><span class="comment">//读锁</span></span><br><span class="line">Lock readLock=rwLock.readLock();</span><br><span class="line"><span class="comment">//写锁</span></span><br><span class="line">Lock writeLock=rwLock.writeLock();</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  readLock.lock();</span><br><span class="line">&#125;<span class="keyword">catch</span>...</span><br></pre></td></tr></table></figure>
+
+<h2 id="Implementation-Detail"><a href="#Implementation-Detail" class="headerlink" title="Implementation Detail"></a>Implementation Detail</h2><p>读写锁共用Sync中的state变量来管理锁状态，高16位为读锁状态，低16位为写锁状态</p>
+<p>例子：<br>0000000000000001 | 0000000000000000</p>
+<p>0000000000000000 | 0000000000000001</p>
+<h3 id="ReadLock（读锁）"><a href="#ReadLock（读锁）" class="headerlink" title="ReadLock（读锁）"></a>ReadLock（读锁）</h3><h4 id="lock（获取锁的逻辑）"><a href="#lock（获取锁的逻辑）" class="headerlink" title="lock（获取锁的逻辑）"></a>lock（获取锁的逻辑）</h4><p>读锁获取锁的逻辑:如果写锁没有被其他线程占有，则成功获取锁，否则线程阻塞直到写锁被释放,具体如下</p>
+<h5 id="1-lock：调用sync的acquireShared-方法"><a href="#1-lock：调用sync的acquireShared-方法" class="headerlink" title="1. lock：调用sync的acquireShared()方法"></a>1. lock：调用sync的acquireShared()方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;sync.acquireShared(<span class="number">1</span>);&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-acquiredShared：调用tryAcquireShared尝试获取共享锁-若获取失败-则调用doAcquireShared阻塞直至被唤醒"><a href="#2-acquiredShared：调用tryAcquireShared尝试获取共享锁-若获取失败-则调用doAcquireShared阻塞直至被唤醒" class="headerlink" title="2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒"></a>2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquireShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (tryAcquireShared(arg) &lt; <span class="number">0</span>)</span><br><span class="line">            doAcquireShared(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-tryAcquireShared"><a href="#3-tryAcquireShared" class="headerlink" title="3. tryAcquireShared:"></a>3. tryAcquireShared:</h5><ul>
+<li>如果当前锁写状态不为0且占锁线程非当前线程，那么返回占锁失败的值-1。</li>
+<li>如果公平策略没有要求阻塞且重入数没有到达最大值，则直接尝试cas更新state。</li>
+</ul>
+<p>a. 如果cas操作成功，有以下操作逻辑：<br>1）首先，如果当前读锁计数为0那么就设置第一个读线程就是当前线程。</p>
+<p>2）其次，当前线程和firstReader同一个线程，记录firstReaderHoldCount也就是第一个读线程读锁定次数。</p>
+<p>3）最后，读锁数量不为0并且不为当前线程，获取当前线程ThreadLocal当中的读锁重入计数器。结果返回占锁成功的值1</p>
+<p>b. 如果cas操作失败，有以下操作逻辑：<br>通过fullTryAcquireShared尝试获取读锁，内部处理和tryAcquireShared过程相同</p>
+<h5 id="4-fullTryAcquireShared"><a href="#4-fullTryAcquireShared" class="headerlink" title="4. fullTryAcquireShared"></a>4. fullTryAcquireShared</h5><p>逻辑同上，只是加了一个无限循环尝试获取共享锁</p>
+<h5 id="5-doAcquireShared"><a href="#5-doAcquireShared" class="headerlink" title="5. doAcquireShared"></a>5. doAcquireShared</h5><p>doAcquireShared用来处理读锁获取失败后等待的逻辑,doAcquireShared的内部的自旋保证了线程被唤醒后再次判断是否是第一个节点并尝试获取锁，失败再次进入休眠</p>
+<p>1）将当前线程封装成Shared Node类型加入CLH队列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Node node = addWaiter(Node.SHARED);</span><br></pre></td></tr></table></figure>
+
+<p>2)如果当前线程的Node节点是CLH队列的第一个节点则当前线程直接获取锁并开启读锁的扩散唤醒所有阻塞读锁的线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setHeadAndPropagate(node, r);</span><br></pre></td></tr></table></figure>
+
+<p>3)如果当前线程的Node节点不是CLH队列的第一个节点那么就通过parkAndCheckInterrupt进入休眠</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                   parkAndCheckInterrupt())</span><br><span class="line">                   interrupted = <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="unlock（释放锁的逻辑）"><a href="#unlock（释放锁的逻辑）" class="headerlink" title="unlock（释放锁的逻辑）"></a>unlock（释放锁的逻辑）</h4><ul>
+<li>ReadLock的unlock()方法调用sync.releaseShared(1)方法进行释放。</li>
+<li>调用tryReleaseShared()方法尝试释放锁，如果释放成功，调用doReleaseShared尝试唤醒下一个节点</li>
+</ul>
+<h3 id="WriteLock（写锁）"><a href="#WriteLock（写锁）" class="headerlink" title="WriteLock（写锁）"></a>WriteLock（写锁）</h3><p>好累，下次再继续写:&gt;</p>
+
     </article>
+    <!-- license  -->
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/10/14/2019-10-14-Summary of Data Structure/" title= "Summary Of Data Structure">
+                    <div class="prevTitle">Summary Of Data Structure</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNDI2OS8xMDgwNg==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -476,6 +593,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-a-ReadWriteLock"><span class="toc-number">1.</span> <span class="toc-text">What is a ReadWriteLock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Performance-Goal"><span class="toc-number">2.</span> <span class="toc-text">Performance Goal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">3.</span> <span class="toc-text">Usage</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementation-Detail"><span class="toc-number">4.</span> <span class="toc-text">Implementation Detail</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ReadLock（读锁）"><span class="toc-number">4.1.</span> <span class="toc-text">ReadLock（读锁）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#lock（获取锁的逻辑）"><span class="toc-number">4.1.1.</span> <span class="toc-text">lock（获取锁的逻辑）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-lock：调用sync的acquireShared-方法"><span class="toc-number">4.1.1.1.</span> <span class="toc-text">1. lock：调用sync的acquireShared()方法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-acquiredShared：调用tryAcquireShared尝试获取共享锁-若获取失败-则调用doAcquireShared阻塞直至被唤醒"><span class="toc-number">4.1.1.2.</span> <span class="toc-text">2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-tryAcquireShared"><span class="toc-number">4.1.1.3.</span> <span class="toc-text">3. tryAcquireShared:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-fullTryAcquireShared"><span class="toc-number">4.1.1.4.</span> <span class="toc-text">4. fullTryAcquireShared</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-doAcquireShared"><span class="toc-number">4.1.1.5.</span> <span class="toc-text">5. doAcquireShared</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#unlock（释放锁的逻辑）"><span class="toc-number">4.1.2.</span> <span class="toc-text">unlock（释放锁的逻辑）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WriteLock（写锁）"><span class="toc-number">4.2.</span> <span class="toc-text">WriteLock（写锁）</span></a></li></ol></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -901,6 +1036,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
