@@ -361,6 +361,180 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2020/08/23/2020-08-23-Kafka基础/" >
+            
+                <span>Kafka基础</span>
+        </a>
+        <div class="abstract-content">
+            Kafka基础基本介绍“官网”Technically speaking, event streaming is the practice of capturing data in real-time from event sources like databases, sensors, mobile devices, cloud services, and software applications in the form of streams of events; storing these event streams durably for later retrieval; mani...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/23</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "kafka">kafka</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2020/08/23/2020-08-23-Spark聚合操作/" >
+            
+                <span>Spark聚合操作</span>
+        </a>
+        <div class="abstract-content">
+            Spark聚合操作聚合函数
+count
+1df.select(count("StockCode")).show()
+
+countDistinct
+1df.select(countDistinct("StockCode")).show()
+
+approx_count_distinct
+
+first
+
+last
+
+min
+
+max
+
+sum
+
+sumDistinct
+
+avg
+
+var_pop
+
+var_samp
+
+stddev_pop
+
+stddev_samp
+
+cov
+
+corr
+
+
+聚合输出复杂类型1df.agg(collect_set("Country"),collect_list(...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/23</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "spark">spark</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2020/08/23/2020-08-23-Spark Dataframe基本操作/" >
+            
+                <span>Spark Dataframe基本操作</span>
+        </a>
+        <div class="abstract-content">
+            Spark Dataframe基本操作创建DataFrame12val df=spark.read.format("json").load("/data/flight-data/json/2015-summary.json")df.createOrReplaceTempView("dfTable")
+
+123456789val myManualSchema = new StructType(Array(new StructField("some",StringType,true),      new StructField("col",StringType,true),      new...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/23</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "spark">spark</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2020/08/23/2020-08-23-Hadoop各组件基本介绍/" >
+            
+                <span>Hadoop各组件基本介绍</span>
+        </a>
+        <div class="abstract-content">
+            Hadoop各组件基本介绍前言Hadoop作为大数据生态中很重要的一环，其各个组件构成了搭建大数据平台的基础。了解清楚其底层各组件，有助于更好的进行相关的开发
+大纲
+HDFS
+MapReduce
+Hive
+Hbase
+
+HDFSHadoop Distributed File System实现了一个分布式文件存储系统，简单的来说就是将海量的文件分布的存储在不同的物理磁盘上，使用者不需要关心具体某部分数据被存储在哪里，而能够像在单机文件系统上一样存储读取文件。
+HDFS的架构
+NameNode: 维护文件系统数和整颗树上的各个节点
+DataNode: 数据真正存放的位置
+
+MapReduce...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/23</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "hadoop">hadoop</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "hdfs">hdfs</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "mapreduce">mapreduce</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "hive">hive</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "hbase">hbase</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2020/01/02/2020-01-02-Java可重入读写锁源码分析/" >
             
                 <span>Java可重入读写锁源码分析</span>
@@ -649,9 +823,98 @@ Pe...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 15
+        Total : 20
         </div>
         <!-- search  -->
         
@@ -671,6 +934,26 @@ Pe...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/23</span><a class="archive-post-title" href= "/2020/08/23/2020-08-23-Hadoop各组件基本介绍/" >Hadoop各组件基本介绍</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/23</span><a class="archive-post-title" href= "/2020/08/23/2020-08-23-Spark Dataframe基本操作/" >Spark Dataframe基本操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/23</span><a class="archive-post-title" href= "/2020/08/23/2020-08-23-Spark聚合操作/" >Spark聚合操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/23</span><a class="archive-post-title" href= "/2020/08/23/2020-08-23-Kafka基础/" >Kafka基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">01/02</span><a class="archive-post-title" href= "/2020/01/02/2020-01-02-Java可重入读写锁源码分析/" >Java可重入读写锁源码分析</a>
         </li>
     
@@ -686,6 +969,11 @@ Pe...
     
         <li class="archive-post-item">
             <span class="archive-post-date">10/14</span><a class="archive-post-title" href= "/2019/10/14/2019-10-14-Summary of Data Structure/" >Summary Of Data Structure</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2019/09/10/2019-09-10-SpringCache/" >Spring Cache</a>
         </li>
     
     
@@ -762,9 +1050,9 @@ Pe...
     
         <span class="sidebar-tag-name" data-tags="coding"><span class="iconfont-archer">&#xe606;</span>coding</span>
     
-        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
-    
         <span class="sidebar-tag-name" data-tags="micro-service"><span class="iconfont-archer">&#xe606;</span>micro-service</span>
+    
+        <span class="sidebar-tag-name" data-tags="cep"><span class="iconfont-archer">&#xe606;</span>cep</span>
     
         <span class="sidebar-tag-name" data-tags="IO"><span class="iconfont-archer">&#xe606;</span>IO</span>
     
@@ -772,9 +1060,9 @@ Pe...
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
-        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
-    
         <span class="sidebar-tag-name" data-tags="springcloud"><span class="iconfont-archer">&#xe606;</span>springcloud</span>
+    
+        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
         <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
@@ -803,6 +1091,20 @@ Pe...
         <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
     
         <span class="sidebar-tag-name" data-tags="ioc"><span class="iconfont-archer">&#xe606;</span>ioc</span>
+    
+        <span class="sidebar-tag-name" data-tags="hadoop"><span class="iconfont-archer">&#xe606;</span>hadoop</span>
+    
+        <span class="sidebar-tag-name" data-tags="hdfs"><span class="iconfont-archer">&#xe606;</span>hdfs</span>
+    
+        <span class="sidebar-tag-name" data-tags="mapreduce"><span class="iconfont-archer">&#xe606;</span>mapreduce</span>
+    
+        <span class="sidebar-tag-name" data-tags="hive"><span class="iconfont-archer">&#xe606;</span>hive</span>
+    
+        <span class="sidebar-tag-name" data-tags="hbase"><span class="iconfont-archer">&#xe606;</span>hbase</span>
+    
+        <span class="sidebar-tag-name" data-tags="spark"><span class="iconfont-archer">&#xe606;</span>spark</span>
+    
+        <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -839,11 +1141,13 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Spring"><span class="iconfont-archer">&#xe60a;</span>Spring</span>
     
-        <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
-    
         <span class="sidebar-category-name" data-categories="micro-service微服务"><span class="iconfont-archer">&#xe60a;</span>micro-service微服务</span>
     
+        <span class="sidebar-category-name" data-categories="Java后端开发"><span class="iconfont-archer">&#xe60a;</span>Java后端开发</span>
+    
         <span class="sidebar-category-name" data-categories="Data-Structure"><span class="iconfont-archer">&#xe60a;</span>Data-Structure</span>
+    
+        <span class="sidebar-category-name" data-categories="大数据开发"><span class="iconfont-archer">&#xe60a;</span>大数据开发</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
