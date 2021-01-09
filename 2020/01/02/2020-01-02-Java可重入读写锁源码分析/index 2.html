@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="What is a ReadWriteLockBasically, a ReadWriteLock is designed as a high-level locking mechanism that allows you to add thread-safety feature to a data structure while increasing throughput by allowing">
+<meta name="keywords" content="java,juc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java可重入读写锁源码分析">
+<meta property="og:url" content="http://yifanyu123.github.io/2020/01/02/2020-01-02-Java可重入读写锁源码分析/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="What is a ReadWriteLockBasically, a ReadWriteLock is designed as a high-level locking mechanism that allows you to add thread-safety feature to a data structure while increasing throughput by allowing">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-01-02T11:46:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java可重入读写锁源码分析">
+<meta name="twitter:description" content="What is a ReadWriteLockBasically, a ReadWriteLock is designed as a high-level locking mechanism that allows you to add thread-safety feature to a data structure while increasing throughput by allowing">
+  <link rel="canonical" href="http://yifanyu123.github.io/2020/01/02/2020-01-02-Java可重入读写锁源码分析/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Java可重入读写锁源码分析 | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2020/01/02/2020-01-02-Java可重入读写锁源码分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Java可重入读写锁源码分析
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2020-01-02 00:00:00 / Modified: 19:46:36" itemprop="dateCreated datePublished" datetime="2020-01-02T00:00:00+08:00">2020-01-02</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java后端开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Java后端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="What-is-a-ReadWriteLock"><a href="#What-is-a-ReadWriteLock" class="headerlink" title="What is a ReadWriteLock"></a>What is a ReadWriteLock</h2><p>Basically, a ReadWriteLock is designed as a high-level locking mechanism that allows you to add thread-safety feature to a data structure while increasing throughput by allowing multiple threads to read the data concurrently and one thread to update the data exclusively.</p><a id="more"></a>
+<h2 id="Performance-Goal"><a href="#Performance-Goal" class="headerlink" title="Performance Goal"></a>Performance Goal</h2><ul>
+<li>multiple threads can read the data at the same time as long as there is no thread updating the data</li>
+<li>Only one thread can update the data at one time, causing other threads(both read and write thread) block until the write lock is released</li>
+<li>if a thread attempts to update the data while other threads are reading the data, the write lock blocks until the read lock is released.</li>
+</ul>
+<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ReadWriteLock rwLock = <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line"><span class="comment">//读锁</span></span><br><span class="line">Lock readLock=rwLock.readLock();</span><br><span class="line"><span class="comment">//写锁</span></span><br><span class="line">Lock writeLock=rwLock.writeLock();</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  readLock.lock();</span><br><span class="line">&#125;<span class="keyword">catch</span>...</span><br></pre></td></tr></table></figure>
+
+<h2 id="Implementation-Detail"><a href="#Implementation-Detail" class="headerlink" title="Implementation Detail"></a>Implementation Detail</h2><p>读写锁共用Sync中的state变量来管理锁状态，高16位为读锁状态，低16位为写锁状态</p>
+<p>例子：<br>0000000000000001 | 0000000000000000</p>
+<p>0000000000000000 | 0000000000000001</p>
+<h3 id="ReadLock（读锁）"><a href="#ReadLock（读锁）" class="headerlink" title="ReadLock（读锁）"></a>ReadLock（读锁）</h3><h4 id="lock（获取锁的逻辑）"><a href="#lock（获取锁的逻辑）" class="headerlink" title="lock（获取锁的逻辑）"></a>lock（获取锁的逻辑）</h4><p>读锁获取锁的逻辑:如果写锁没有被其他线程占有，则成功获取锁，否则线程阻塞直到写锁被释放,具体如下</p>
+<h5 id="1-lock：调用sync的acquireShared-方法"><a href="#1-lock：调用sync的acquireShared-方法" class="headerlink" title="1. lock：调用sync的acquireShared()方法"></a>1. lock：调用sync的acquireShared()方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;sync.acquireShared(<span class="number">1</span>);&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-acquiredShared：调用tryAcquireShared尝试获取共享锁-若获取失败-则调用doAcquireShared阻塞直至被唤醒"><a href="#2-acquiredShared：调用tryAcquireShared尝试获取共享锁-若获取失败-则调用doAcquireShared阻塞直至被唤醒" class="headerlink" title="2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒"></a>2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquireShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (tryAcquireShared(arg) &lt; <span class="number">0</span>)</span><br><span class="line">            doAcquireShared(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-tryAcquireShared"><a href="#3-tryAcquireShared" class="headerlink" title="3. tryAcquireShared:"></a>3. tryAcquireShared:</h5><ul>
+<li>如果当前锁写状态不为0且占锁线程非当前线程，那么返回占锁失败的值-1。</li>
+<li>如果公平策略没有要求阻塞且重入数没有到达最大值，则直接尝试cas更新state。</li>
+</ul>
+<p>a. 如果cas操作成功，有以下操作逻辑：<br>1）首先，如果当前读锁计数为0那么就设置第一个读线程就是当前线程。</p>
+<p>2）其次，当前线程和firstReader同一个线程，记录firstReaderHoldCount也就是第一个读线程读锁定次数。</p>
+<p>3）最后，读锁数量不为0并且不为当前线程，获取当前线程ThreadLocal当中的读锁重入计数器。结果返回占锁成功的值1</p>
+<p>b. 如果cas操作失败，有以下操作逻辑：<br>通过fullTryAcquireShared尝试获取读锁，内部处理和tryAcquireShared过程相同</p>
+<h5 id="4-fullTryAcquireShared"><a href="#4-fullTryAcquireShared" class="headerlink" title="4. fullTryAcquireShared"></a>4. fullTryAcquireShared</h5><p>逻辑同上，只是加了一个无限循环尝试获取共享锁</p>
+<h5 id="5-doAcquireShared"><a href="#5-doAcquireShared" class="headerlink" title="5. doAcquireShared"></a>5. doAcquireShared</h5><p>doAcquireShared用来处理读锁获取失败后等待的逻辑,doAcquireShared的内部的自旋保证了线程被唤醒后再次判断是否是第一个节点并尝试获取锁，失败再次进入休眠</p>
+<p>1）将当前线程封装成Shared Node类型加入CLH队列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Node node = addWaiter(Node.SHARED);</span><br></pre></td></tr></table></figure>
+
+<p>2)如果当前线程的Node节点是CLH队列的第一个节点则当前线程直接获取锁并开启读锁的扩散唤醒所有阻塞读锁的线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setHeadAndPropagate(node, r);</span><br></pre></td></tr></table></figure>
+
+<p>3)如果当前线程的Node节点不是CLH队列的第一个节点那么就通过parkAndCheckInterrupt进入休眠</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                   parkAndCheckInterrupt())</span><br><span class="line">                   interrupted = <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="unlock（释放锁的逻辑）"><a href="#unlock（释放锁的逻辑）" class="headerlink" title="unlock（释放锁的逻辑）"></a>unlock（释放锁的逻辑）</h4><ul>
+<li>ReadLock的unlock()方法调用sync.releaseShared(1)方法进行释放。</li>
+<li>调用tryReleaseShared()方法尝试释放锁，如果释放成功，调用doReleaseShared尝试唤醒下一个节点</li>
+</ul>
+<h3 id="WriteLock（写锁）"><a href="#WriteLock（写锁）" class="headerlink" title="WriteLock（写锁）"></a>WriteLock（写锁）</h3><p>好累，下次再继续写:&gt;</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/java/" rel="tag"># java</a>
+            
+              <a href="/tags/juc/" rel="tag"># juc</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/2019-10-14-Summary of Data Structure/" rel="next" title="Summary Of Data Structure">
+                  <i class="fa fa-chevron-left"></i> Summary Of Data Structure
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/08/23/2020-08-23-Spark Dataframe基本操作/" rel="prev" title="Spark Dataframe基本操作">
+                  Spark Dataframe基本操作 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-a-ReadWriteLock"><span class="nav-number">1.</span> <span class="nav-text">What is a ReadWriteLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Performance-Goal"><span class="nav-number">2.</span> <span class="nav-text">Performance Goal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Usage"><span class="nav-number">3.</span> <span class="nav-text">Usage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation-Detail"><span class="nav-number">4.</span> <span class="nav-text">Implementation Detail</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ReadLock（读锁）"><span class="nav-number">4.1.</span> <span class="nav-text">ReadLock（读锁）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lock（获取锁的逻辑）"><span class="nav-number">4.1.1.</span> <span class="nav-text">lock（获取锁的逻辑）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-lock：调用sync的acquireShared-方法"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">1. lock：调用sync的acquireShared()方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-acquiredShared：调用tryAcquireShared尝试获取共享锁-若获取失败-则调用doAcquireShared阻塞直至被唤醒"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">2. acquiredShared：调用tryAcquireShared尝试获取共享锁,若获取失败,则调用doAcquireShared阻塞直至被唤醒</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-tryAcquireShared"><span class="nav-number">4.1.1.3.</span> <span class="nav-text">3. tryAcquireShared:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-fullTryAcquireShared"><span class="nav-number">4.1.1.4.</span> <span class="nav-text">4. fullTryAcquireShared</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-doAcquireShared"><span class="nav-number">4.1.1.5.</span> <span class="nav-text">5. doAcquireShared</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unlock（释放锁的逻辑）"><span class="nav-number">4.1.2.</span> <span class="nav-text">unlock（释放锁的逻辑）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WriteLock（写锁）"><span class="nav-number">4.2.</span> <span class="nav-text">WriteLock（写锁）</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="前言:rmi(remote method invocation)是java官方的远程调用的是一种实现方式，它使得我们能像调用本地服务一般调用远程服务">
+<meta name="keywords" content="java,rmi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA rmi的实现及源码解析">
+<meta property="og:url" content="http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="前言:rmi(remote method invocation)是java官方的远程调用的是一种实现方式，它使得我们能像调用本地服务一般调用远程服务">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yifanyu123.github.io/image/rmi.png">
+<meta property="og:updated_time" content="2020-01-14T07:04:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAVA rmi的实现及源码解析">
+<meta name="twitter:description" content="前言:rmi(remote method invocation)是java官方的远程调用的是一种实现方式，它使得我们能像调用本地服务一般调用远程服务">
+<meta name="twitter:image" content="http://yifanyu123.github.io/image/rmi.png">
+  <link rel="canonical" href="http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JAVA rmi的实现及源码解析 | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            JAVA rmi的实现及源码解析
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-09-01 00:00:00" itemprop="dateCreated datePublished" datetime="2019-09-01T00:00:00+08:00">2019-09-01</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-14 15:04:13" itemprop="dateModified" datetime="2020-01-14T15:04:13+08:00">2020-01-14</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java后端开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Java后端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前言:rmi(remote method invocation)是java官方的远程调用的是一种实现方式，它使得我们能像调用本地服务一般调用远程服务</p>
+<a id="more"></a>
+<p><img src="/image/rmi.png" alt="rmi"></p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="1-客户端调用"><a href="#1-客户端调用" class="headerlink" title="1. 客户端调用"></a>1. 客户端调用</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TODO 类描述</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> xcw</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        String url = <span class="string">"rmi://localhost:8888/"</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 在RMI服务注册表中查找名称为server-service的对象，并调用其上的方法</span></span><br><span class="line">            <span class="comment">//Naming.lookup(registry url+service name)将会返回Remote接口</span></span><br><span class="line">            ServerService service = (ServerService) Naming.lookup(url + <span class="string">"server-service"</span>);</span><br><span class="line"></span><br><span class="line">            Class stubClass = service.getClass();</span><br><span class="line">            System.out.println(service + <span class="string">" 是 "</span> + stubClass.getName() + <span class="string">" 的实例！"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获得本底存根已实现的接口类型</span></span><br><span class="line">            Class[] interfaces = stubClass.getInterfaces();</span><br><span class="line">            <span class="keyword">for</span> (Class c : interfaces) &#123;</span><br><span class="line">                System.out.println(<span class="string">"存根类实现了 "</span> + c.getName() + <span class="string">" 接口！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(service.service());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><h5 id="1-在RMI服务注册表中查找服务接口-Naming-lookup-registry-url-service-name-将会返回"><a href="#1-在RMI服务注册表中查找服务接口-Naming-lookup-registry-url-service-name-将会返回" class="headerlink" title="1. 在RMI服务注册表中查找服务接口, Naming.lookup(registry url+service name)将会返回"></a>1. 在RMI服务注册表中查找服务接口, Naming.lookup(registry url+service name)将会返回</h5><p>Proxy[ServerService,RemoteObjectInvocationHandler[UnicastRef [liveRef: [endpoint:<a href="remote">192.168.1.103:49471</a>,objID:[-79051ded:16cec85dc68:-7fff, -7771089289704678398]]]]]</p>
+<p>即ServerService的动态代理对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ServerService service = (ServerService) Naming.lookup(url + <span class="string">"server-service"</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-进入Naming-lookup方程"><a href="#2-进入Naming-lookup方程" class="headerlink" title="2. 进入Naming.lookup方程"></a>2. 进入Naming.lookup方程</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Returns a reference, a stub, for the remote object associated</span></span><br><span class="line"><span class="comment">   * with the specified &lt;code&gt;name&lt;/code&gt;.</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> name a name in URL format (without the scheme component)</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> a reference for a remote object</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@exception</span> NotBoundException if name is not currently bound</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@exception</span> RemoteException if registry could not be contacted</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@exception</span> AccessException if this operation is not permitted</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@exception</span> MalformedURLException if the name is not an appropriately</span></span><br><span class="line"><span class="comment">   *  formatted URL</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@since</span> JDK1.1</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Remote <span class="title">lookup</span><span class="params">(String name)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> NotBoundException,</span></span><br><span class="line"><span class="function">          java.net.MalformedURLException,</span></span><br><span class="line"><span class="function">          RemoteException</span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">      ParsedNamingURL parsed = parseURL(name);</span><br><span class="line">      Registry registry = getRegistry(parsed);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (parsed.name == <span class="keyword">null</span>)</span><br><span class="line">          <span class="keyword">return</span> registry;</span><br><span class="line">      <span class="keyword">return</span> registry.lookup(parsed.name);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Registry registry = getRegistry(parsed);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Registry is a remote interface to a simple remote<br> object registry that provides methods for storing and retrieving remote object references bound with arbitrary string names.</p>
+</blockquote>
+<h5 id="3-Registry接口帮我们拿到我们想要的指定名称的远程服务的reference-即RegistryImpl-Stub"><a href="#3-Registry接口帮我们拿到我们想要的指定名称的远程服务的reference-即RegistryImpl-Stub" class="headerlink" title="3. Registry接口帮我们拿到我们想要的指定名称的远程服务的reference 即RegistryImpl_Stub"></a>3. Registry接口帮我们拿到我们想要的指定名称的远程服务的reference 即RegistryImpl_Stub</h5><ul>
+<li>进入registry.lookup(parsed.name)<blockquote>
+<p>调用 RegistryImpl_Stub的ref（RemoteRef）对象的newCall()方法，将RegistryImpl_Stub对象传了进去，不要忘了构造它的时候我们将服务器的主机端口等信息传了进去，也就是我们把服务器相关的信息也传进了newCall()方法。newCall()方法做的事情简单来看就是建立了跟远程RegistryImpl的Skeleton对象的连接</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Remote <span class="title">lookup</span><span class="params">(String var1)</span> <span class="keyword">throws</span> AccessException, NotBoundException, RemoteException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            RemoteCall var2 = <span class="keyword">this</span>.ref.newCall(<span class="keyword">this</span>, operations, <span class="number">2</span>, <span class="number">4905912898345647071L</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ObjectOutput var3 = var2.getOutputStream();</span><br><span class="line">                var3.writeObject(var1);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException var17) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> MarshalException(<span class="string">"error marshalling arguments"</span>, var17);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">this</span>.ref.invoke(var2);</span><br><span class="line"></span><br><span class="line">            Remote var22;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ObjectInput var4 = var2.getInputStream();</span><br><span class="line">                var22 = (Remote)var4.readObject();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException var14) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> UnmarshalException(<span class="string">"error unmarshalling return"</span>, var14);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException var15) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> UnmarshalException(<span class="string">"error unmarshalling return"</span>, var15);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">this</span>.ref.done(var2);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> var22;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException var18) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var18;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException var19) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var19;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NotBoundException var20) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var20;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception var21) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UnexpectedException(<span class="string">"undeclared checked exception"</span>, var21);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-客户端获取服务端返回的服务Stub对象，接下来可以利用Stub对象进行远程调用"><a href="#4-客户端获取服务端返回的服务Stub对象，接下来可以利用Stub对象进行远程调用" class="headerlink" title="4. 客户端获取服务端返回的服务Stub对象，接下来可以利用Stub对象进行远程调用"></a>4. 客户端获取服务端返回的服务Stub对象，接下来可以利用Stub对象进行远程调用</h5><h3 id="2-服务端"><a href="#2-服务端" class="headerlink" title="2. 服务端"></a>2. 服务端</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TODO 类描述</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> xcw</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//实例化ServerServiceImpl</span></span><br><span class="line">            ServerService service = <span class="keyword">new</span> ServerServiceImpl();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 本地主机上的远程对象注册表Registry的实例，并指定端口为8888，这一步必不可少（Java默认端口是1099</span></span><br><span class="line">            <span class="comment">// ），必不可缺的一步，缺少注册表创建，则无法绑定对象到远程注册表上</span></span><br><span class="line">            LocateRegistry.createRegistry(<span class="number">8888</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//绑定的URL标准格式为：rmi://host:port/name(其中协议名可以省略，下面两种写法都是正确的）</span></span><br><span class="line">            Naming.bind(<span class="string">"rmi://localhost:8888/server-service"</span>, service);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"服务器向命名表注册了1个远程服务对象！"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-LocateRegistry-createRegistry-8888-创建RegistryImpl对象"><a href="#1-LocateRegistry-createRegistry-8888-创建RegistryImpl对象" class="headerlink" title="1. LocateRegistry.createRegistry(8888)创建RegistryImpl对象"></a>1. LocateRegistry.createRegistry(8888)创建RegistryImpl对象</h5><p>源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">RegistryImpl</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> var1)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.bindings = <span class="keyword">new</span> Hashtable(<span class="number">101</span>);</span><br><span class="line">      <span class="keyword">if</span> (var1 == <span class="number">1099</span> &amp;&amp; System.getSecurityManager() != <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">              AccessController.doPrivileged(<span class="keyword">new</span> PrivilegedExceptionAction&lt;Void&gt;() &#123;</span><br><span class="line">                  <span class="function"><span class="keyword">public</span> Void <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">                      LiveRef var1x = <span class="keyword">new</span> LiveRef(RegistryImpl.id, var1);</span><br><span class="line">                      RegistryImpl.<span class="keyword">this</span>.setup(<span class="keyword">new</span> UnicastServerRef(var1x, (var0) -&gt; &#123;</span><br><span class="line">                          <span class="keyword">return</span> RegistryImpl.registryFilter(var0);</span><br><span class="line">                      &#125;));</span><br><span class="line">                      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;, (AccessControlContext)<span class="keyword">null</span>, <span class="keyword">new</span> SocketPermission(<span class="string">"localhost:"</span> + var1, <span class="string">"listen,accept"</span>));</span><br><span class="line">          &#125; <span class="keyword">catch</span> (PrivilegedActionException var3) &#123;</span><br><span class="line">              <span class="keyword">throw</span> (RemoteException)var3.getException();</span><br><span class="line">          &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          LiveRef var2 = <span class="keyword">new</span> LiveRef(id, var1);</span><br><span class="line">          <span class="keyword">this</span>.setup(<span class="keyword">new</span> UnicastServerRef(var2, RegistryImpl::registryFilter));</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RegistryImpl.<span class="keyword">this</span>.setup(<span class="keyword">new</span> UnicastServerRef(var1x, (var0) -&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> RegistryImpl.registryFilter(var0);</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+
+<p>setUp()方法将指向正在初始化的RegistryImpl对象的远程引用ref（RemoteRef）赋值为传入的UnicastServerRef对象，这里涉及了向上转型。然后继续移交UnicastServerRef的exportObject()方法。</p>
+<p>进入UnicastServerRef的exportObject()方法。可以看到，这里首先为传入的RegistryImpl创建一个代理，这个代理我们可以推断出就是后面服务于客户端的RegistryImpl的Stub对象。然后将UnicastServerRef的skel（skeleton）对象设置为当前RegistryImpl对象。最后用skeleton、stub、UnicastServerRef对象、id和一个boolean值构造了一个Target对象，也就是这个Target对象基本上包含了全部的信息。调用UnicastServerRef的ref（LiveRef）变量的exportObject()方法。</p>
+<p>到上面为止，我们看到的都是一些变量的赋值和创建工作，还没有到连接层，这些引用对象将会被Stub和Skeleton对象使用。接下来就是连接层上的了。追溯LiveRef的exportObject()方法，很容易找到了TCPTransport的exportObject()方法。这个方法做的事情就是将上面构造的Target对象暴露出去。调用TCPTransport的listen()方法，listen()方法创建了一个ServerSocket，并且启动了一条线程等待客户端的请求。接着调用父类Transport的exportObject()将Target对象存放进ObjectTable中</p>
+<h5 id="2-将服务实现绑定到服务端的RegistryImpl上，使得客户端只需与RegistryImpl-Stub交互"><a href="#2-将服务实现绑定到服务端的RegistryImpl上，使得客户端只需与RegistryImpl-Stub交互" class="headerlink" title="2. 将服务实现绑定到服务端的RegistryImpl上，使得客户端只需与RegistryImpl_Stub交互"></a>2. 将服务实现绑定到服务端的RegistryImpl上，使得客户端只需与RegistryImpl_Stub交互</h5><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>当客户端通过RMI注册表找到一个远程接口的时候，所得到的其实是远程接口的一个动态代理对象。</li>
+<li>当客户端调用其中的方法的时候，方法的参数对象会在序列化之后，传输到服务器端</li>
+<li>服务器端接收到之后，进行反序列化得到参数对象</li>
+<li>并使用这些参数对象，在服务器端调用实际的方法</li>
+<li>调用的返回值Java对象经过序列化之后，再发送回客户端</li>
+<li>客户端再经过反序列化之后得到Java对象，返回给调用者</li>
+<li>这中间的序列化过程对于使用者来说是透明的，由动态代理对象自动完成</li>
+</ul>
+<h3 id="Stub和Skeleton的作用"><a href="#Stub和Skeleton的作用" class="headerlink" title="Stub和Skeleton的作用"></a>Stub和Skeleton的作用</h3><ul>
+<li>Stub对象做的事情是建立到服务端Skeleton对象的Socket连接。将客户端的方法调用转换为字符串标识传递给Skeleton对象。并且同步阻塞等待服务端返回结果</li>
+<li>Skeleton对象做的事情是将服务实现传入构造参数，获取客户端通过socket传过来的方法调用字符串标识，将请求转发到具体的服务上面。获取结果之后返回给客户端。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/java/" rel="tag"># java</a>
+            
+              <a href="/tags/rmi/" rel="tag"># rmi</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/08/28/2019-08-28-CaffienCache缓存机制/" rel="next" title="CaffienCache缓存机制">
+                  <i class="fa fa-chevron-left"></i> CaffienCache缓存机制
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/09/02/2019-09-02-Java动态代理源码解析/" rel="prev" title="Java动态代理源码解析">
+                  Java动态代理源码解析 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#源码分析"><span class="nav-number">1.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-客户端调用"><span class="nav-number">1.1.</span> <span class="nav-text">1. 客户端调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码"><span class="nav-number">1.1.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-number">1.1.2.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-在RMI服务注册表中查找服务接口-Naming-lookup-registry-url-service-name-将会返回"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1. 在RMI服务注册表中查找服务接口, Naming.lookup(registry url+service name)将会返回</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-进入Naming-lookup方程"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2. 进入Naming.lookup方程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Registry接口帮我们拿到我们想要的指定名称的远程服务的reference-即RegistryImpl-Stub"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">3. Registry接口帮我们拿到我们想要的指定名称的远程服务的reference 即RegistryImpl_Stub</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-客户端获取服务端返回的服务Stub对象，接下来可以利用Stub对象进行远程调用"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">4. 客户端获取服务端返回的服务Stub对象，接下来可以利用Stub对象进行远程调用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-服务端"><span class="nav-number">1.2.</span> <span class="nav-text">2. 服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-LocateRegistry-createRegistry-8888-创建RegistryImpl对象"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">1. LocateRegistry.createRegistry(8888)创建RegistryImpl对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-将服务实现绑定到服务端的RegistryImpl上，使得客户端只需与RegistryImpl-Stub交互"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">2. 将服务实现绑定到服务端的RegistryImpl上，使得客户端只需与RegistryImpl_Stub交互</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Stub和Skeleton的作用"><span class="nav-number">2.1.</span> <span class="nav-text">Stub和Skeleton的作用</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

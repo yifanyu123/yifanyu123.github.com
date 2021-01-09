@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="PrefaceSummarize what I learned from the data structure class and some of its implementation in different language.">
+<meta name="keywords" content="data structure,linked list,array,hash,graph,stack,queue,heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Summary Of Data Structure">
+<meta property="og:url" content="http://yifanyu123.github.io/2019/10/14/2019-10-14-Summary of Data Structure/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="PrefaceSummarize what I learned from the data structure class and some of its implementation in different language.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yifanyu123.github.io/image/array.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/linkedlist.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/stack.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/queue.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/hashMap.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/bst.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/B-tree.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/B+tree.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/B*tree.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/rbtree.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/UnionFind.png">
+<meta property="og:updated_time" content="2020-01-02T11:43:19.145Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Summary Of Data Structure">
+<meta name="twitter:description" content="PrefaceSummarize what I learned from the data structure class and some of its implementation in different language.">
+<meta name="twitter:image" content="http://yifanyu123.github.io/image/array.png">
+  <link rel="canonical" href="http://yifanyu123.github.io/2019/10/14/2019-10-14-Summary of Data Structure/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Summary Of Data Structure | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2019/10/14/2019-10-14-Summary of Data Structure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Summary Of Data Structure
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-14T00:00:00+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-02 19:43:19" itemprop="dateModified" datetime="2020-01-02T19:43:19+08:00">2020-01-02</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Data-Structure/" itemprop="url" rel="index">
+                    <span itemprop="name">Data Structure</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Preface</strong><br>Summarize what I learned from the data structure class and some of its implementation in different language.</p>
+<a id="more"></a>
+
+<p><strong>Category</strong></p>
+<ul>
+<li>Array</li>
+<li>LinkedList</li>
+<li>Stack</li>
+<li>Queue</li>
+<li>Heap</li>
+<li>Map<ul>
+<li>HashMap/Dictionary</li>
+<li>LinkedHashMap/OrderedDict</li>
+</ul>
+</li>
+<li>Tree<ol>
+<li>Binary Search Tree</li>
+<li>B tree<ul>
+<li>B-tree</li>
+<li>B+tree</li>
+<li>B* tree</li>
+</ul>
+</li>
+<li>Red-Black Tree</li>
+</ol>
+</li>
+<li>Graph<ul>
+<li>Quick Find</li>
+<li>Quick Union</li>
+<li>Weighted Quick Union</li>
+<li>Path Compression</li>
+<li>Weighted + Path</li>
+</ul>
+</li>
+</ul>
+<h2 id="Array"><a href="#Array" class="headerlink" title="Array"></a>Array</h2><h3 id="Structure"><a href="#Structure" class="headerlink" title="Structure"></a>Structure</h3><p><img src="/image/array.png" alt="&quot;array&quot;"></p>
+<h3 id="Member-Function-Time-Complexity"><a href="#Member-Function-Time-Complexity" class="headerlink" title="Member Function Time Complexity"></a>Member Function Time Complexity</h3><table>
+<thead>
+<tr>
+<th align="center">Action</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Add</td>
+<td align="center">O(1)</td>
+</tr>
+<tr>
+<td align="center">Access By Index</td>
+<td align="center">O(1)</td>
+</tr>
+<tr>
+<td align="center">Search</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">Insert</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">Resize</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">Delete</td>
+<td align="center">O(N)</td>
+</tr>
+</tbody></table>
+<h3 id="Implementation-in-different-language"><a href="#Implementation-in-different-language" class="headerlink" title="Implementation in different language"></a>Implementation in different language</h3><h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><ol>
+<li><p>Array—Fixed Size In Stack<br>Example:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> arr[]=&#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">40</span>,<span class="number">60</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> *p=arr;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;arr&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;arr+<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;*p&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;*(p+<span class="number">2</span>)&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;p[<span class="number">3</span>]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;&amp;p&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Dynamic Array–Can Change Size During Runtime</p>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>* a = <span class="literal">NULL</span>;   <span class="comment">// Pointer to int, initialize to nothing.</span></span><br><span class="line"><span class="keyword">int</span> n;           <span class="comment">// Size needed for array</span></span><br><span class="line"><span class="built_in">cin</span> &gt;&gt; n;        <span class="comment">// Read in the size</span></span><br><span class="line">a = <span class="keyword">new</span> <span class="keyword">int</span>[n];  <span class="comment">// Allocate n ints and save ptr in a.</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">    a[i] = <span class="number">0</span>;    <span class="comment">// Initialize all elements to zero.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">delete</span> [] a;  <span class="comment">// When done, free memory pointed to by a.</span></span><br><span class="line">a = <span class="literal">NULL</span>;     <span class="comment">// Clear a to prevent using invalid memory reference.</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h4><ol>
+<li>Plain Array<br>Much Similar As what is done in C++</li>
+<li>ArrayList(Defined in JDK library)</li>
+</ol>
+<p><strong>Def: An Object Class that implements List Interface</strong><br>Note that ArrayList used static function of Arrays to do the resize</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T,U&gt; T[] copyOf(U[] original, <span class="keyword">int</span> newLength, Class&lt;? extends T[]&gt; newType)</span><br><span class="line">&#123;</span><br><span class="line"> <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"> T[] copy = ((Object)newType == (Object)Object[].class)</span><br><span class="line">            ? (T[]) <span class="keyword">new</span> Object[newLength]</span><br><span class="line">            : (T[]) Array.newInstance(newType.getComponentType(), newLength);</span><br><span class="line">System.arraycopy(original, <span class="number">0</span>, copy, <span class="number">0</span>,</span><br><span class="line">                         Math.min(original.length, newLength));</span><br><span class="line"><span class="keyword">return</span> copy;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>The Java Virtual Machine used reflection mechanism to initialize a new Array object with the new size during runtime</li>
+<li>Copy the old element to the new Array</li>
+</ol>
+<h4 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h4><p>In python, one can use list to serve as an array</p>
+<h2 id="Linked-List"><a href="#Linked-List" class="headerlink" title="Linked List"></a>Linked List</h2><h3 id="Structure-1"><a href="#Structure-1" class="headerlink" title="Structure"></a>Structure</h3><p><img src="/image/linkedlist.png" alt="&quot;linkedlist&quot;"></p>
+<h3 id="Member-Function-Time-Complexity-1"><a href="#Member-Function-Time-Complexity-1" class="headerlink" title="Member Function Time Complexity"></a>Member Function Time Complexity</h3><table>
+<thead>
+<tr>
+<th align="center">Action</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Add</td>
+<td align="center">O(1)</td>
+</tr>
+<tr>
+<td align="center">Access By Index</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">Search</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">Insert</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">Resize</td>
+<td align="center">O(1)</td>
+</tr>
+<tr>
+<td align="center">Delete</td>
+<td align="center">O(N)</td>
+</tr>
+</tbody></table>
+<h3 id="Implementation-in-different-language-1"><a href="#Implementation-in-different-language-1" class="headerlink" title="Implementation in different language"></a>Implementation in different language</h3><h4 id="C-1"><a href="#C-1" class="headerlink" title="C++"></a>C++</h4><p>Example:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> data;</span><br><span class="line">    node *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">linked_list</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    node *head,*tail;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    linked_list()</span><br><span class="line">    &#123;</span><br><span class="line">        head = <span class="literal">NULL</span>;</span><br><span class="line">        tail = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add_node</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        node *tmp = <span class="keyword">new</span> node;</span><br><span class="line">        tmp-&gt;data = n;</span><br><span class="line">        tmp-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(head == <span class="literal">NULL</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            head = tmp;</span><br><span class="line">            tail = tmp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            tail-&gt;next = tmp;</span><br><span class="line">            tail = tail-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Java-1"><a href="#Java-1" class="headerlink" title="Java"></a>Java</h4><p>Predefined LinkedList that implements List interface</p>
+<h4 id="Python-1"><a href="#Python-1" class="headerlink" title="Python"></a>Python</h4><p>Def Node</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, data=None, next_node=None)</span>:</span></span><br><span class="line">        self.data = data</span><br><span class="line">        self.next_node = next_node</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_data</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.data</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_next</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.next_node</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_next</span><span class="params">(self, new_next)</span>:</span></span><br><span class="line">        self.next_node = new_next</span><br></pre></td></tr></table></figure>
+
+<p>Def linkedList</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, head=None)</span>:</span></span><br><span class="line">        self.head = head</span><br><span class="line"></span><br><span class="line">    <span class="comment">#...omitted#</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h2><p><strong>FILO: First In Last Out</strong></p>
+<h3 id="Structure-2"><a href="#Structure-2" class="headerlink" title="Structure"></a>Structure</h3><p><img src="/image/stack.png" alt="&quot;stack&quot;"></p>
+<h3 id="Member-Function-Time-Complexity-2"><a href="#Member-Function-Time-Complexity-2" class="headerlink" title="Member Function Time Complexity"></a>Member Function Time Complexity</h3><table>
+<thead>
+<tr>
+<th align="center">Action</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Push</td>
+<td align="center">O(1)</td>
+</tr>
+<tr>
+<td align="center">Pop</td>
+<td align="center">O(1)</td>
+</tr>
+</tbody></table>
+<h3 id="Implementation-in-Different-Language"><a href="#Implementation-in-Different-Language" class="headerlink" title="Implementation in Different Language"></a>Implementation in Different Language</h3><h4 id="C-2"><a href="#C-2" class="headerlink" title="C++"></a>C++</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> STACK_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STACK_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"node.h"</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">stack</span>&#123;</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="comment">// constructor</span></span><br><span class="line">  <span class="built_in">stack</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// modifiers</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(T entry)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">pop</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// accessors</span></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function">T <span class="title">top</span><span class="params">()</span></span>;</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  node&lt;T&gt;* head;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"stack.cpp"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Java-2"><a href="#Java-2" class="headerlink" title="Java"></a>Java</h4><p>Can use ArrayList to serve as Stack</p>
+<h4 id="Python-2"><a href="#Python-2" class="headerlink" title="Python"></a>Python</h4><p>Can use list</p>
+<h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><p>FIFO:First In Last Out</p>
+<h3 id="Structure-3"><a href="#Structure-3" class="headerlink" title="Structure"></a>Structure</h3><p><img src="/image/queue.png" alt="&quot;queue&quot;"></p>
+<h2 id="Heap"><a href="#Heap" class="headerlink" title="Heap"></a>Heap</h2><ul>
+<li>MinHeap</li>
+<li>MaxHeap<br>Can be implemented using Array</li>
+</ul>
+<h3 id="Time-Complexity"><a href="#Time-Complexity" class="headerlink" title="Time Complexity"></a>Time Complexity</h3><table>
+<thead>
+<tr>
+<th align="center">Action</th>
+<th align="center">Worst Time Complexity</th>
+<th align="center">Step</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">insert</td>
+<td align="center">O(logN)</td>
+<td align="center">NA</td>
+</tr>
+<tr>
+<td align="center">delete min</td>
+<td align="center">O(logN)</td>
+<td align="center">Switch min with the last entry and heapify</td>
+</tr>
+<tr>
+<td align="center">Sort</td>
+<td align="center">O(NlogN)</td>
+<td align="center">build a min heap, delete min iteratively</td>
+</tr>
+</tbody></table>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><h3 id="Structure-4"><a href="#Structure-4" class="headerlink" title="Structure"></a>Structure</h3><p><img src="/image/hashMap.png" alt="&quot;map&quot;"></p>
+<h3 id="Hashing"><a href="#Hashing" class="headerlink" title="Hashing"></a>Hashing</h3><ul>
+<li>Probing<ul>
+<li>Linear Probing: When Collision happens, always find the nex spot</li>
+<li>Quadratic Probing: When Collision happens, always find the next i^2 spots</li>
+</ul>
+</li>
+<li>Chained Hashing<ul>
+<li>When collision happens, Link the same hash element</li>
+</ul>
+</li>
+</ul>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><ol>
+<li>Python<ul>
+<li>Dict</li>
+<li>OrderedDict</li>
+</ul>
+</li>
+<li>Java<ul>
+<li>HashMap</li>
+<li>LinkedHashMap</li>
+</ul>
+</li>
+</ol>
+<h2 id="Tree"><a href="#Tree" class="headerlink" title="Tree"></a>Tree</h2><ol>
+<li>Binary Tree<ul>
+<li>Full Binary Tree</li>
+<li>Complete Binary Tree</li>
+<li>Consider the Skewed Case</li>
+</ul>
+</li>
+</ol>
+<p><img src="/image/bst.png" alt="&quot;bst&quot;"></p>
+<table>
+<thead>
+<tr>
+<th align="center">Action</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">insert</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">delete</td>
+<td align="center">O(N)</td>
+</tr>
+<tr>
+<td align="center">search</td>
+<td align="center">O(N)</td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li>B tree（<strong>Self Balanced</strong>）</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="center">Action</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">insert</td>
+<td align="center">O(logN)</td>
+</tr>
+<tr>
+<td align="center">delete</td>
+<td align="center">O(logN)</td>
+</tr>
+<tr>
+<td align="center">search</td>
+<td align="center">O(logN)</td>
+</tr>
+</tbody></table>
+<p>Difference Between different B tree</p>
+<ul>
+<li>B-tree: Self Balanced Search Tree</li>
+</ul>
+<p><img src="/image/B-tree.png" alt="&quot;B-tree&quot;"></p>
+<ul>
+<li>B+tree: Only the leaf Node store the data, Non-leaf node only contains the key as road map</li>
+</ul>
+<p><img src="/image/B+tree.png" alt="&quot;B+tree&quot;"></p>
+<ul>
+<li>B* tree: Contains the pointer to brother node</li>
+</ul>
+<p><img src="/image/B*tree.png" alt="&quot;map&quot;"></p>
+<ol start="3">
+<li>Red-Black Tree</li>
+</ol>
+<ul>
+<li>Root of the tree is always black</li>
+<li>No adjacent red node</li>
+<li>Every path from a node to any of its descendent null node has the same number of black node<br><img src="/image/rbtree.png" alt="&quot;rbtree.png&quot;"></li>
+</ul>
+<h2 id="Graph"><a href="#Graph" class="headerlink" title="Graph"></a>Graph</h2><p><img src="/image/UnionFind.png" alt="&quot;UnionFind&quot;"><br>With M union and find Operation on N graph Node objects</p>
+<p>Time Complexity</p>
+<table>
+<thead>
+<tr>
+<th align="center">type of union-find</th>
+<th align="center">Worst Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Quick-find</td>
+<td align="center">MN</td>
+</tr>
+<tr>
+<td align="center">Quick-union</td>
+<td align="center">MN</td>
+</tr>
+<tr>
+<td align="center">weighted Union</td>
+<td align="center">N+MlogN</td>
+</tr>
+<tr>
+<td align="center">Path Compression</td>
+<td align="center">N+MlogN</td>
+</tr>
+<tr>
+<td align="center">weighted+Path</td>
+<td align="center">(M+N)log* N</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/data-structure/" rel="tag"># data structure</a>
+            
+              <a href="/tags/linked-list/" rel="tag"># linked list</a>
+            
+              <a href="/tags/array/" rel="tag"># array</a>
+            
+              <a href="/tags/hash/" rel="tag"># hash</a>
+            
+              <a href="/tags/graph/" rel="tag"># graph</a>
+            
+              <a href="/tags/stack/" rel="tag"># stack</a>
+            
+              <a href="/tags/queue/" rel="tag"># queue</a>
+            
+              <a href="/tags/heap/" rel="tag"># heap</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/09/10/2019-09-10-Spring Cache/" rel="next" title="Spring Cache">
+                  <i class="fa fa-chevron-left"></i> Spring Cache
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/01/02/2020-01-02-Java可重入读写锁源码分析/" rel="prev" title="Java可重入读写锁源码分析">
+                  Java可重入读写锁源码分析 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Array"><span class="nav-number">1.</span> <span class="nav-text">Array</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Structure"><span class="nav-number">1.1.</span> <span class="nav-text">Structure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Member-Function-Time-Complexity"><span class="nav-number">1.2.</span> <span class="nav-text">Member Function Time Complexity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementation-in-different-language"><span class="nav-number">1.3.</span> <span class="nav-text">Implementation in different language</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#C"><span class="nav-number">1.3.1.</span> <span class="nav-text">C++</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java"><span class="nav-number">1.3.2.</span> <span class="nav-text">Java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Python"><span class="nav-number">1.3.3.</span> <span class="nav-text">Python</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linked-List"><span class="nav-number">2.</span> <span class="nav-text">Linked List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Structure-1"><span class="nav-number">2.1.</span> <span class="nav-text">Structure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Member-Function-Time-Complexity-1"><span class="nav-number">2.2.</span> <span class="nav-text">Member Function Time Complexity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementation-in-different-language-1"><span class="nav-number">2.3.</span> <span class="nav-text">Implementation in different language</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#C-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">C++</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">Java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Python-1"><span class="nav-number">2.3.3.</span> <span class="nav-text">Python</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stack"><span class="nav-number">3.</span> <span class="nav-text">Stack</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Structure-2"><span class="nav-number">3.1.</span> <span class="nav-text">Structure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Member-Function-Time-Complexity-2"><span class="nav-number">3.2.</span> <span class="nav-text">Member Function Time Complexity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementation-in-Different-Language"><span class="nav-number">3.3.</span> <span class="nav-text">Implementation in Different Language</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#C-2"><span class="nav-number">3.3.1.</span> <span class="nav-text">C++</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-2"><span class="nav-number">3.3.2.</span> <span class="nav-text">Java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Python-2"><span class="nav-number">3.3.3.</span> <span class="nav-text">Python</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Queue"><span class="nav-number">4.</span> <span class="nav-text">Queue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Structure-3"><span class="nav-number">4.1.</span> <span class="nav-text">Structure</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heap"><span class="nav-number">5.</span> <span class="nav-text">Heap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Time-Complexity"><span class="nav-number">5.1.</span> <span class="nav-text">Time Complexity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">6.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Structure-4"><span class="nav-number">6.1.</span> <span class="nav-text">Structure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hashing"><span class="nav-number">6.2.</span> <span class="nav-text">Hashing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementation"><span class="nav-number">6.3.</span> <span class="nav-text">Implementation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tree"><span class="nav-number">7.</span> <span class="nav-text">Tree</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Graph"><span class="nav-number">8.</span> <span class="nav-text">Graph</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

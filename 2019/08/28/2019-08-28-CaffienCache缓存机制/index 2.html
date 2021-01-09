@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="前言:今日在做项目优化时第一次引入Caffien Cache,该缓存机制能有效提升用户访问获取数据效率,我们可以将几乎不太变更的数据存入本地缓存，并定时更新缓存,在高并发场景将会有效提升系统性能">
+<meta name="keywords" content="java,spring,cache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CaffienCache缓存机制">
+<meta property="og:url" content="http://yifanyu123.github.io/2019/08/28/2019-08-28-CaffienCache缓存机制/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="前言:今日在做项目优化时第一次引入Caffien Cache,该缓存机制能有效提升用户访问获取数据效率,我们可以将几乎不太变更的数据存入本地缓存，并定时更新缓存,在高并发场景将会有效提升系统性能">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-14T11:46:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CaffienCache缓存机制">
+<meta name="twitter:description" content="前言:今日在做项目优化时第一次引入Caffien Cache,该缓存机制能有效提升用户访问获取数据效率,我们可以将几乎不太变更的数据存入本地缓存，并定时更新缓存,在高并发场景将会有效提升系统性能">
+  <link rel="canonical" href="http://yifanyu123.github.io/2019/08/28/2019-08-28-CaffienCache缓存机制/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>CaffienCache缓存机制 | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2019/08/28/2019-08-28-CaffienCache缓存机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            CaffienCache缓存机制
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-08-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-28T00:00:00+08:00">2019-08-28</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-14 19:46:28" itemprop="dateModified" datetime="2019-10-14T19:46:28+08:00">2019-10-14</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java后端开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Java后端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前言:<br>今日在做项目优化时第一次引入Caffien Cache,该缓存机制能有效提升用户访问获取数据效率,我们可以将几乎不太变更的数据存入本地缓存，并定时更新缓存,在高并发场景将会有效提升系统性能</p>
+<a id="more"></a>
+<p>介绍:</p>
+<blockquote>
+<p>Caffeine is a high performance, near optimal caching library based on Java 8. For more details, see our user’s guide and browse the API docs for the latest release.</p>
+</blockquote>
+<p><a href="https://github.com/ben-manes/caffeine" target="_blank" rel="noopener">Github链接</a></p>
+<h2 id="一-三种缓存机制"><a href="#一-三种缓存机制" class="headerlink" title="一. 三种缓存机制"></a>一. 三种缓存机制</h2><h3 id="1-手动加载"><a href="#1-手动加载" class="headerlink" title="1. 手动加载"></a>1. 手动加载</h3><p>该例子的运行机制为</p>
+<ol>
+<li>Spring容器启动,单例BseBusinessIndexManagerImpl Bean被创建</li>
+<li>PostConstruct()方法被执行,initCache()方法创建第一个缓存,一个定时线程被启动,每隔60分钟initCache()方法都会被运行,我们从数据库中获取最新的多条数据,put方法会自动更新原来key值对应的数据,但是这也会造成一个问题,过期key对应的缓存数据将不会被删除</li>
+<li>关于get方法获取缓存数据,它的机制为每次先从缓存里查询,缓存中如果没有就调用降级方法去二级缓存或数据库中查找,并存入本地缓存</li>
+<li>get 方法是以阻塞方式执行调用，即使多个线程同时请求该值也只会调用一次Function方法。这样可以避免与其他线程的写入竞争，这也是为什么使用 get 优于 getIfPresent 的原因</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BseBusinessIndexManagerImpl</span> <span class="keyword">implements</span> <span class="title">BseBusinessIndexManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Cache&lt;String, BseBusinessIndexPO&gt; INDEX_CACHE = Caffeine.newBuilder()</span><br><span class="line">            .maximumSize(<span class="number">2048</span>)</span><br><span class="line">            .recordStats()</span><br><span class="line">            .build();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> BseBusinessIndexMapper businessIndexMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        initCache();</span><br><span class="line">        Executors.newSingleThreadScheduledExecutor(<span class="keyword">new</span> ThreadFactoryBuilder()</span><br><span class="line">                .setNameFormat(<span class="string">"business-index-cache-updater"</span>).build())</span><br><span class="line">                .scheduleWithFixedDelay(() -&gt; initCache(), <span class="number">60</span>, <span class="number">60</span>, TimeUnit.MINUTES);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BseBusinessIndexPO <span class="title">getIndexById</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> businessIndexMapper.selectByIndexId(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;BseBusinessIndexPO&gt; <span class="title">getValidIndexes</span><span class="params">(String tableName, <span class="keyword">boolean</span> isRealTime,</span></span></span><br><span class="line"><span class="function"><span class="params">            List&lt;String&gt; fieldNames)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> businessIndexMapper.getValidIndexes(tableName, isRealTime ? <span class="number">1</span> : <span class="number">0</span>, fieldNames);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BseBusinessIndexPO <span class="title">getCachedIndex</span><span class="params">(String tableName, String fieldName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> INDEX_CACHE.get(<span class="string">"table.field:"</span> + tableName + <span class="string">":"</span> + fieldName, k -&gt; &#123;</span><br><span class="line">            String key = k.substring(<span class="string">"table.field:"</span>.length());</span><br><span class="line">            String t = key.split(<span class="string">":"</span>)[<span class="number">0</span>];</span><br><span class="line">            String f = key.split(<span class="string">":"</span>)[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">return</span> businessIndexMapper.selectByTableAndField(t, f);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initCache</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        List&lt;BseBusinessIndexPO&gt; indexes = businessIndexMapper.selectAll();</span><br><span class="line">        <span class="keyword">if</span> (indexes.size() &gt; <span class="number">1001</span>) &#123;</span><br><span class="line">            log.error(<span class="string">"Business index count &gt; 1000"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (BseBusinessIndexPO index : indexes) &#123;</span><br><span class="line">            INDEX_CACHE.put(<span class="string">"table.field:"</span> + index.getTableName()</span><br><span class="line">                    + <span class="string">":"</span> + index.getFieldName(), index);</span><br><span class="line">            INDEX_CACHE.put(<span class="string">"id:"</span> + index.getId(), index);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-同步加载"><a href="#2-同步加载" class="headerlink" title="2. 同步加载"></a>2. 同步加载</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">LoadingCache&lt;String, Object&gt; loadingCache = Caffeine.newBuilder()</span><br><span class="line">        .maximumSize(<span class="number">10_000</span>)</span><br><span class="line">        .expireAfterWrite(<span class="number">10</span>, TimeUnit.MINUTES)</span><br><span class="line">        .build(key -&gt; createExpensiveGraph(key));</span><br><span class="line"></span><br><span class="line">String key = <span class="string">"name1"</span>;</span><br><span class="line"><span class="comment">// 采用同步方式去获取一个缓存和上面的手动方式是一个原理。在build Cache的时候会提供一个createExpensiveGraph函数。</span></span><br><span class="line"><span class="comment">// 查询并在缺失的情况下使用同步的方式来构建一个缓存</span></span><br><span class="line">Object graph = loadingCache.get(key);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取组key的值返回一个Map</span></span><br><span class="line">List&lt;String&gt; keys = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">keys.add(key);</span><br><span class="line">Map&lt;String, Object&gt; graphs = loadingCache.getAll(keys);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-异步加载"><a href="#3-异步加载" class="headerlink" title="3. 异步加载"></a>3. 异步加载</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">AsyncLoadingCache&lt;String, Object&gt; asyncLoadingCache = Caffeine.newBuilder()</span><br><span class="line">            .maximumSize(<span class="number">10_000</span>)</span><br><span class="line">            .expireAfterWrite(<span class="number">10</span>, TimeUnit.MINUTES)</span><br><span class="line">            <span class="comment">// Either: Build with a synchronous computation that is wrapped as asynchronous</span></span><br><span class="line">            .buildAsync(key -&gt; createExpensiveGraph(key));</span><br><span class="line">            <span class="comment">// Or: Build with a asynchronous computation that returns a future</span></span><br><span class="line">            <span class="comment">// .buildAsync((key, executor) -&gt; createExpensiveGraphAsync(key, executor));</span></span><br><span class="line"></span><br><span class="line"> String key = <span class="string">"name1"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询并在缺失的情况下使用异步的方式来构建缓存</span></span><br><span class="line">CompletableFuture&lt;Object&gt; graph = asyncLoadingCache.get(key);</span><br><span class="line"><span class="comment">// 查询一组缓存并在缺失的情况下使用异步的方式来构建缓存</span></span><br><span class="line">List&lt;String&gt; keys = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">keys.add(key);</span><br><span class="line">CompletableFuture&lt;Map&lt;String, Object&gt;&gt; graphs = asyncLoadingCache.getAll(keys);</span><br><span class="line"><span class="comment">// 异步转同步</span></span><br><span class="line">loadingCache = asyncLoadingCache.synchronous();</span><br></pre></td></tr></table></figure>
+
+<h2 id="二-值回收"><a href="#二-值回收" class="headerlink" title="二. 值回收"></a>二. 值回收</h2><h3 id="1-基于大小回收"><a href="#1-基于大小回收" class="headerlink" title="1. 基于大小回收"></a>1. 基于大小回收</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LoadingCache&lt;String, DataObject&gt; cache = Caffeine.newBuilder()</span><br><span class="line">  .maximumSize(<span class="number">1</span>)</span><br><span class="line">  .build(k -&gt; DataObject.get(<span class="string">"Data for "</span> + k));</span><br><span class="line"></span><br><span class="line">assertEquals(<span class="number">0</span>, cache.estimatedSize());</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-基于时间回收"><a href="#2-基于时间回收" class="headerlink" title="2. 基于时间回收"></a>2. 基于时间回收</h3><p>未完待续…</p>
+<ul>
+<li>访问后到期</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LoadingCache&lt;String, DataObject&gt; cache = Caffeine.newBuilder()</span><br><span class="line">  .expireAfterAccess(<span class="number">5</span>, TimeUnit.MINUTES)</span><br><span class="line">  .build(k -&gt; DataObject.get(<span class="string">"Data for "</span> + k));</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>写入后到期</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cache = Caffeine.newBuilder()</span><br><span class="line">  .expireAfterWrite(<span class="number">10</span>, TimeUnit.SECONDS)</span><br><span class="line">  .weakKeys()</span><br><span class="line">  .weakValues()</span><br><span class="line">  .build(k -&gt; DataObject.get(<span class="string">"Data for "</span> + k));</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义策略</li>
+</ul>
+<h2 id="三-刷新"><a href="#三-刷新" class="headerlink" title="三. 刷新"></a>三. 刷新</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Caffeine.newBuilder()</span><br><span class="line">  .refreshAfterWrite(<span class="number">1</span>, TimeUnit.MINUTES)</span><br><span class="line">  .build(k -&gt; DataObject.get(<span class="string">"Data for "</span> + k));</span><br></pre></td></tr></table></figure>
+
+<p>这里我们要明白 expireAfter 和 refreshAfter 之间的区别。当请求过期条目时，执行将发生阻塞，直到 build Function 计算出新值为止。</p>
+<p>但是，如果条目可以刷新，则缓存将返回一个旧值，并异步重新加载该值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">未完待续...关于Cache在SpringBoot上的集成</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/java/" rel="tag"># java</a>
+            
+              <a href="/tags/spring/" rel="tag"># spring</a>
+            
+              <a href="/tags/cache/" rel="tag"># cache</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/08/27/2019-08-27-SpringCloud/" rel="next" title="Spring Cloud">
+                  <i class="fa fa-chevron-left"></i> Spring Cloud
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/09/01/2019-09-01-JAVA rmi的实现及源码解析/" rel="prev" title="JAVA rmi的实现及源码解析">
+                  JAVA rmi的实现及源码解析 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-三种缓存机制"><span class="nav-number">1.</span> <span class="nav-text">一. 三种缓存机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-手动加载"><span class="nav-number">1.1.</span> <span class="nav-text">1. 手动加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-同步加载"><span class="nav-number">1.2.</span> <span class="nav-text">2. 同步加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-异步加载"><span class="nav-number">1.3.</span> <span class="nav-text">3. 异步加载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-值回收"><span class="nav-number">2.</span> <span class="nav-text">二. 值回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-基于大小回收"><span class="nav-number">2.1.</span> <span class="nav-text">1. 基于大小回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-基于时间回收"><span class="nav-number">2.2.</span> <span class="nav-text">2. 基于时间回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-刷新"><span class="nav-number">3.</span> <span class="nav-text">三. 刷新</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

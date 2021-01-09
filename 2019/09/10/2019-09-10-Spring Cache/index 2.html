@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="前言：这几天做公司项目的时候第一次接触CaffineCache,一开始写的是手动操作的版本，近几日做优化利用了Spring集成的接口来进行管理">
+<meta name="keywords" content="java,spring,cache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cache">
+<meta property="og:url" content="http://yifanyu123.github.io/2019/09/10/2019-09-10-Spring Cache/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="前言：这几天做公司项目的时候第一次接触CaffineCache,一开始写的是手动操作的版本，近几日做优化利用了Spring集成的接口来进行管理">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-14T11:46:23.716Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Cache">
+<meta name="twitter:description" content="前言：这几天做公司项目的时候第一次接触CaffineCache,一开始写的是手动操作的版本，近几日做优化利用了Spring集成的接口来进行管理">
+  <link rel="canonical" href="http://yifanyu123.github.io/2019/09/10/2019-09-10-Spring Cache/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Spring Cache | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2019/09/10/2019-09-10-Spring Cache/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Spring Cache
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-09-10 00:00:00" itemprop="dateCreated datePublished" datetime="2019-09-10T00:00:00+08:00">2019-09-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-14 19:46:23" itemprop="dateModified" datetime="2019-10-14T19:46:23+08:00">2019-10-14</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java后端开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Java后端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前言：这几天做公司项目的时候第一次接触CaffineCache,一开始写的是手动操作的版本，近几日做优化利用了Spring集成的接口来进行管理</p>
+<a id="more"></a>
+<h2 id="Spring-Cache是什么"><a href="#Spring-Cache是什么" class="headerlink" title="Spring Cache是什么"></a>Spring Cache是什么</h2><p>官方文档</p>
+<blockquote>
+<p>the Spring Framework provides support for transparently adding caching to an existing Spring application. Similar to the transaction support, the caching abstraction allows consistent use of various caching solutions with minimal impact on the code.</p>
+</blockquote>
+<p>简单来说,Spring定义了一组规范的CRUD API规范,使我们可以方便的操作缓存实体(Redis,Caffine等)</p>
+<h2 id="如何配置"><a href="#如何配置" class="headerlink" title="如何配置"></a>如何配置</h2><h3 id="application-properties"><a href="#application-properties" class="headerlink" title="application.properties"></a>application.properties</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义缓存名称</span></span><br><span class="line"><span class="meta">spring.cache.cache-names</span>=<span class="string">agencyDataIndexOption,realTimeIndex</span></span><br><span class="line"><span class="comment"># 设定延时，最大数据量</span></span><br><span class="line"><span class="meta">spring.cache.caffeine.spec</span>=<span class="string">maximumSize=500,expireAfterAccess=6s</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置类"><a href="#配置类" class="headerlink" title="配置类"></a>配置类</h3><p>配置多个CacheManager:</p>
+<ul>
+<li>可以为每个Cache定义不同的CacheManager</li>
+<li>可以设定不同的时长</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties</span>(CacheProperties.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacheManagerConfiguration</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CacheProperties cacheProperties;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CacheManagerConfiguration</span><span class="params">(CacheProperties cacheProperties)</span>    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.cacheProperties = cacheProperties;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CacheManagerNames</span> </span>&#123;</span><br><span class="line">        String REDIS_CACHE_MANAGER = <span class="string">"redisCacheManager"</span>;</span><br><span class="line">        String EHCACHE_CACHE_MANAGER = <span class="string">"ehCacheManager"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(name = CacheManagerNames.REDIS_CACHE_MANAGER)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisCacheManager <span class="title">redisCacheManager</span><span class="params">(RedisConnectionFactory factory)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, RedisCacheConfiguration&gt; expires = ImmutableMap.&lt;String, RedisCacheConfiguration&gt;builder()</span><br><span class="line">                .put(<span class="string">"15"</span>, RedisCacheConfiguration.defaultCacheConfig().entryTtl(</span><br><span class="line">                        Duration.ofMillis(<span class="number">15</span>)</span><br><span class="line">                ))</span><br><span class="line">                .put(<span class="string">"30"</span>, RedisCacheConfiguration.defaultCacheConfig().entryTtl(</span><br><span class="line">                        Duration.ofMillis(<span class="number">30</span>)</span><br><span class="line">                ))</span><br><span class="line">                .put(<span class="string">"60"</span>, RedisCacheConfiguration.defaultCacheConfig().entryTtl(</span><br><span class="line">                        Duration.ofMillis(<span class="number">60</span>)</span><br><span class="line">                ))</span><br><span class="line">                .put(<span class="string">"120"</span>, RedisCacheConfiguration.defaultCacheConfig().entryTtl(</span><br><span class="line">                        Duration.ofMillis(<span class="number">120</span>)</span><br><span class="line">                ))</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        RedisCacheManager redisCacheManager = RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(factory)</span><br><span class="line">                .withInitialCacheConfigurations(expires)</span><br><span class="line">                .build();</span><br><span class="line">        <span class="keyword">return</span> redisCacheManager;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(name = CacheManagerNames.EHCACHE_CACHE_MANAGER)</span><br><span class="line">    <span class="meta">@Primary</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> EhCacheCacheManager <span class="title">ehCacheManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Resource resource = <span class="keyword">this</span>.cacheProperties.getEhcache().getConfig();</span><br><span class="line">        resource = <span class="keyword">this</span>.cacheProperties.resolveConfigLocation(resource);</span><br><span class="line">        EhCacheCacheManager ehCacheManager = <span class="keyword">new</span> EhCacheCacheManager(</span><br><span class="line">                EhCacheManagerUtils.buildCacheManager(resource)</span><br><span class="line">        );</span><br><span class="line">        ehCacheManager.afterPropertiesSet();</span><br><span class="line">        <span class="keyword">return</span> ehCacheManager;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用-CaffineCache为例"><a href="#使用-CaffineCache为例" class="headerlink" title="使用(CaffineCache为例)"></a>使用(CaffineCache为例)</h2><h3 id="三个注解"><a href="#三个注解" class="headerlink" title="三个注解"></a>三个注解</h3><ul>
+<li>@Cacheable: Triggers cache population.(当重复使用相同参数调用方法的时候，方法本身不会被调用执行，即方法本身被略过了，取而代之的是方法的结果直接从缓存中找到并返回了)</li>
+<li>@CacheEvict: Triggers cache eviction.</li>
+<li>@CachePut: Updates the cache without interfering with the method execution.(这个注释可以确保方法被执行，同时方法的返回值也被记录到缓存中。)</li>
+</ul>
+<h3 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h3><h4 id="在Service中使用"><a href="#在Service中使用" class="headerlink" title="在Service中使用"></a>在Service中使用</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Cacheable</span>(cacheNames = <span class="string">"businessIndex"</span>, sync = <span class="keyword">true</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BseBusinessIndexPO <span class="title">getCachedIndex</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getIndexById(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable</span>(cacheNames = <span class="string">"businessIndex"</span>, sync = <span class="keyword">true</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BseBusinessIndexPO <span class="title">getCachedIndex</span><span class="params">(String tableName, String fieldName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> businessIndexMapper.selectByTableAndField(tableName, fieldName);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="手动管理缓存-利用Spring默认的CacheManager"><a href="#手动管理缓存-利用Spring默认的CacheManager" class="headerlink" title="手动管理缓存,利用Spring默认的CacheManager"></a>手动管理缓存,利用Spring默认的CacheManager</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;cacheName&#125;/&#123;cacheKey&#125;/evict"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> WebApiResponse&lt;String&gt; <span class="title">evict</span><span class="params">(@PathVariable(<span class="string">"cacheName"</span>)</span> String cacheName,</span></span><br><span class="line"><span class="function">            @<span class="title">PathVariable</span><span class="params">(<span class="string">"cacheKey"</span>)</span> String cacheKey) </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Object key=generateKey(cacheKey);</span><br><span class="line">            Optional.ofNullable(cacheManager.getCache(cacheName))</span><br><span class="line">                    .ifPresent(k -&gt; k.evict(key));</span><br><span class="line">            <span class="keyword">return</span> WebApiResponse.success(</span><br><span class="line">                    String.format(<span class="string">"缓存cacheName: %s at %s清除成功"</span>, cacheName, (String) cacheKey));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">return</span> WebApiResponse.error(e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>reference:<br><a href="https://docs.spring.io/spring/docs/5.1.9.RELEASE/spring-framework-reference/integration.html#cache" target="_blank" rel="noopener">https://docs.spring.io/spring/docs/5.1.9.RELEASE/spring-framework-reference/integration.html#cache</a><br><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-caching.html" target="_blank" rel="noopener">https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-caching.html</a></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/java/" rel="tag"># java</a>
+            
+              <a href="/tags/spring/" rel="tag"># spring</a>
+            
+              <a href="/tags/cache/" rel="tag"># cache</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/09/10/2019-09-10-SpringCache/" rel="next" title="Spring Cache">
+                  <i class="fa fa-chevron-left"></i> Spring Cache
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/2019-10-14-Summary of Data Structure/" rel="prev" title="Summary Of Data Structure">
+                  Summary Of Data Structure <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cache是什么"><span class="nav-number">1.</span> <span class="nav-text">Spring Cache是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何配置"><span class="nav-number">2.</span> <span class="nav-text">如何配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#application-properties"><span class="nav-number">2.1.</span> <span class="nav-text">application.properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置类"><span class="nav-number">2.2.</span> <span class="nav-text">配置类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-CaffineCache为例"><span class="nav-number">3.</span> <span class="nav-text">使用(CaffineCache为例)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三个注解"><span class="nav-number">3.1.</span> <span class="nav-text">三个注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实例"><span class="nav-number">3.2.</span> <span class="nav-text">代码实例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在Service中使用"><span class="nav-number">3.2.1.</span> <span class="nav-text">在Service中使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手动管理缓存-利用Spring默认的CacheManager"><span class="nav-number">3.2.2.</span> <span class="nav-text">手动管理缓存,利用Spring默认的CacheManager</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
