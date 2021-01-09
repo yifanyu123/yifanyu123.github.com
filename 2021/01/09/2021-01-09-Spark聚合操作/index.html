@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="前言本文为阅读”Spark The Definitive Guide”Chapter 7 所做的归纳和整理，部分代码来自于书中，部分为自己在本机试验所得Definition of AggregationAggregation is the act of collecting something together.">
+<meta name="keywords" content="spark,aggregation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark聚合操作">
+<meta property="og:url" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="前言本文为阅读”Spark The Definitive Guide”Chapter 7 所做的归纳和整理，部分代码来自于书中，部分为自己在本机试验所得Definition of AggregationAggregation is the act of collecting something together.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation1.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation2.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation3.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation4.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation5.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation6.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation7.png">
+<meta property="og:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation8.png">
+<meta property="og:updated_time" content="2021-01-09T12:12:45.854Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark聚合操作">
+<meta name="twitter:description" content="前言本文为阅读”Spark The Definitive Guide”Chapter 7 所做的归纳和整理，部分代码来自于书中，部分为自己在本机试验所得Definition of AggregationAggregation is the act of collecting something together.">
+<meta name="twitter:image" content="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/image/Aggregation.png">
+  <link rel="canonical" href="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Spark聚合操作 | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2021/01/09/2021-01-09-Spark聚合操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Spark聚合操作
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2021-01-09 00:00:00 / Modified: 20:12:45" itemprop="dateCreated datePublished" datetime="2021-01-09T00:00:00+08:00">2021-01-09</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文为阅读”Spark The Definitive Guide”Chapter 7 所做的归纳和整理，部分代码来自于书中，部分为自己在本机试验所得</p><h1 id="Definition-of-Aggregation"><a href="#Definition-of-Aggregation" class="headerlink" title="Definition of Aggregation"></a>Definition of Aggregation</h1><p>Aggregation is the act of collecting something together.</p><a id="more"></a>
+
+<h1 id="Brief-Overview"><a href="#Brief-Overview" class="headerlink" title="Brief Overview"></a>Brief Overview</h1><p>聚合的类型主要有以下几种</p>
+<ul>
+<li>针对整个数据集(Dataframe)</li>
+<li>分组聚合</li>
+<li>窗口聚合</li>
+<li>Grouping Sets</li>
+<li>rollup （Hierarchically）</li>
+<li>cube （所有可能的组合）</li>
+</ul>
+<p>返回的结果: RelationalGroupedDataset</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> df = spark.read.format(<span class="string">"csv"</span>)</span><br><span class="line">  .option(<span class="string">"header"</span>, <span class="string">"true"</span>)</span><br><span class="line">  .option(<span class="string">"inferSchema"</span>, <span class="string">"true"</span>)</span><br><span class="line">  .load(<span class="string">"/data/retail-data/all/*.csv"</span>)</span><br><span class="line">  .coalesce(<span class="number">5</span>)</span><br><span class="line">df.cache()</span><br><span class="line">df.createOrReplaceTempView(<span class="string">"dfTable"</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="image/Aggregation.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation.png"></p>
+<h1 id="Aggregation-Functions"><a href="#Aggregation-Functions" class="headerlink" title="Aggregation Functions"></a>Aggregation Functions</h1><p>聚合函数大部分被定义在 or.apache.spark.sql.functions</p>
+<h2 id="count"><a href="#count" class="headerlink" title="count"></a>count</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.count</span><br><span class="line">df.select(count(<span class="string">"StockCode"</span>)).show() <span class="comment">// 541909</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="countDistinct"><a href="#countDistinct" class="headerlink" title="countDistinct"></a>countDistinct</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.countDistinct</span><br><span class="line">df.select(countDistinct(<span class="string">"StockCode"</span>)).show() <span class="comment">// 4070</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="approx-count-distinct"><a href="#approx-count-distinct" class="headerlink" title="approx_count_distinct"></a>approx_count_distinct</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.approx_count_distinct</span><br><span class="line">df.select(approx_count_distinct(<span class="string">"StockCode"</span>, <span class="number">0.1</span>)).show() <span class="comment">// 3364</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="first-and-last"><a href="#first-and-last" class="headerlink" title="first and last"></a>first and last</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;first, last&#125;</span><br><span class="line">df.select(first(<span class="string">"StockCode"</span>), last(<span class="string">"StockCode"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="min-and-max"><a href="#min-and-max" class="headerlink" title="min and max"></a>min and max</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;min, max&#125;</span><br><span class="line">df.select(min(<span class="string">"Quantity"</span>), max(<span class="string">"Quantity"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="sum"><a href="#sum" class="headerlink" title="sum"></a>sum</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.sum</span><br><span class="line">df.select(sum(<span class="string">"Quantity"</span>)).show() <span class="comment">// 5176450</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="sumDistinct"><a href="#sumDistinct" class="headerlink" title="sumDistinct"></a>sumDistinct</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.sumDistinct</span><br><span class="line">df.select(sumDistinct(<span class="string">"Quantity"</span>)).show() <span class="comment">// 29310</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="avg"><a href="#avg" class="headerlink" title="avg"></a>avg</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;sum, count, avg, expr&#125;</span><br><span class="line"></span><br><span class="line">df.select(</span><br><span class="line">    count(<span class="string">"Quantity"</span>).alias(<span class="string">"total_transactions"</span>),</span><br><span class="line">    sum(<span class="string">"Quantity"</span>).alias(<span class="string">"total_purchases"</span>),</span><br><span class="line">    avg(<span class="string">"Quantity"</span>).alias(<span class="string">"avg_purchases"</span>),</span><br><span class="line">    expr(<span class="string">"mean(Quantity)"</span>).alias(<span class="string">"mean_purchases"</span>))</span><br><span class="line">  .selectExpr(</span><br><span class="line">    <span class="string">"total_purchases/total_transactions"</span>,</span><br><span class="line">    <span class="string">"avg_purchases"</span>,</span><br><span class="line">    <span class="string">"mean_purchases"</span>).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="variance-and-standard-deviation"><a href="#variance-and-standard-deviation" class="headerlink" title="variance and standard deviation"></a>variance and standard deviation</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;var_pop, stddev_pop&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;var_samp, stddev_samp&#125;</span><br><span class="line">df.select(var_pop(<span class="string">"Quantity"</span>), var_samp(<span class="string">"Quantity"</span>),</span><br><span class="line">  stddev_pop(<span class="string">"Quantity"</span>), stddev_samp(<span class="string">"Quantity"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="skewness-and-kurtosis"><a href="#skewness-and-kurtosis" class="headerlink" title="skewness and kurtosis"></a>skewness and kurtosis</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;skewness, kurtosis&#125;</span><br><span class="line">df.select(skewness(<span class="string">"Quantity"</span>), kurtosis(<span class="string">"Quantity"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="covariance-and-correlation"><a href="#covariance-and-correlation" class="headerlink" title="covariance and correlation"></a>covariance and correlation</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;corr, covar_pop, covar_samp&#125;</span><br><span class="line">df.select(corr(<span class="string">"InvoiceNo"</span>, <span class="string">"Quantity"</span>), covar_samp(<span class="string">"InvoiceNo"</span>, <span class="string">"Quantity"</span>),</span><br><span class="line">    covar_pop(<span class="string">"InvoiceNo"</span>, <span class="string">"Quantity"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="aggregating-to-complex-types"><a href="#aggregating-to-complex-types" class="headerlink" title="aggregating to complex types"></a>aggregating to complex types</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;collect_set, collect_list&#125;</span><br><span class="line">df.agg(collect_set(<span class="string">"Country"</span>), collect_list(<span class="string">"Country"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h1 id="Grouping"><a href="#Grouping" class="headerlink" title="Grouping"></a>Grouping</h1><p>分组聚合,输入多行，输出一行</p>
+<h2 id="Grouping-With-Expressions"><a href="#Grouping-With-Expressions" class="headerlink" title="Grouping With Expressions"></a>Grouping With Expressions</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df.groupBy(<span class="string">"InvoiceNo"</span>).agg(</span><br><span class="line">  count(<span class="string">"Quantity"</span>).alias(<span class="string">"quan"</span>),</span><br><span class="line">  expr(<span class="string">"count(Quantity)"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="Grouping-With-Maps"><a href="#Grouping-With-Maps" class="headerlink" title="Grouping With Maps"></a>Grouping With Maps</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.groupBy(<span class="string">"InvoiceNo"</span>).agg(<span class="string">"Quantity"</span>-&gt;<span class="string">"avg"</span>, <span class="string">"Quantity"</span>-&gt;<span class="string">"stddev_pop"</span>).show()</span><br></pre></td></tr></table></figure>
+
+<h1 id="Window-Functions"><a href="#Window-Functions" class="headerlink" title="Window Functions"></a>Window Functions</h1><p>对输入的每一行在一个分组的窗口范围内做计算，最后为每一行输出一个结果</p>
+<p><img src="image/Aggregation1.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%201.png"></p>
+<p>执行一个窗口函数需要两个要素</p>
+<ul>
+<li>定义一个窗口</li>
+<li>定义一个窗口函数 , 输入: 窗口内的所有行， 输出：一行，目前Spark支持三种窗口函数<ul>
+<li>aggregate function</li>
+<li>ranking function</li>
+<li>analytic function</li>
+</ul>
+</li>
+</ul>
+<h2 id="如何定义一个窗口"><a href="#如何定义一个窗口" class="headerlink" title="如何定义一个窗口"></a>如何定义一个窗口</h2><p>一个窗口的定义需要三个要件</p>
+<ul>
+<li>分组定义，即partition by 的条件，窗口只在指定的分组内生效</li>
+<li>分组内排序条件，即order by的条件，指定了在一个分组内的每一行如何排列</li>
+<li>Window Frame的定义，即rowsBetween, 指定了哪些行可以落在当前行的窗口内</li>
+</ul>
+<p>为了更好的说明，举个例子</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.expressions.<span class="type">Window</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.col</span><br><span class="line"><span class="keyword">val</span> windowSpec = <span class="type">Window</span></span><br><span class="line">  .partitionBy(<span class="string">"CustomerId"</span>, <span class="string">"date"</span>)</span><br><span class="line">  .orderBy(col(<span class="string">"Quantity"</span>).desc)</span><br><span class="line">  .rowsBetween(<span class="type">Window</span>.unboundedPreceding, <span class="type">Window</span>.currentRow)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码定义了一个窗口，首先<code>Window.partitionBy(&quot;CustomerId&quot;, &quot;date&quot;)</code>  指定了当前窗口的分组为相同CustomerId, 相同日期的行，接着<code>orderBy</code>指定了在分组内按照Quantity来排序，最后，<code>rowsBetween</code> 定义了对于每一行来说窗口作用的范围，在上述例子中代表当前行前的所有行到当前行，当然也可以用数字，例如<code>rowsBetween(-1,0)</code>代表前一行到当前行</p>
+<h2 id="定义一个窗口函数"><a href="#定义一个窗口函数" class="headerlink" title="定义一个窗口函数"></a>定义一个窗口函数</h2><p>目前Spark支持的窗口函数主要有三种</p>
+<ul>
+<li>aggregate function</li>
+<li>ranking function</li>
+<li>analytic function</li>
+</ul>
+<p>分别举例说明</p>
+<h3 id="aggregate-function"><a href="#aggregate-function" class="headerlink" title="aggregate function"></a>aggregate function</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.max</span><br><span class="line"><span class="keyword">val</span> maxPurchaseQuantity = max(col(<span class="string">"Quantity"</span>)).over(windowSpec)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码返回了窗口内的最大Quantity值</p>
+<h3 id="ranking-function"><a href="#ranking-function" class="headerlink" title="ranking function"></a>ranking function</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;dense_rank, rank&#125;</span><br><span class="line"><span class="keyword">val</span> purchaseDenseRank = dense_rank().over(windowSpec)</span><br><span class="line"><span class="keyword">val</span> purchaseRank = rank().over(windowSpec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>dense_rank() 返回去重后的rank</li>
+<li>rank() 返回真实排名，如果同一个排名有多个相同的值，后续的rank依次累加</li>
+</ul>
+<h2 id="完整的例子"><a href="#完整的例子" class="headerlink" title="完整的例子"></a>完整的例子</h2><h3 id="Scala"><a href="#Scala" class="headerlink" title="Scala"></a>Scala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;col, to_date&#125;</span><br><span class="line"><span class="keyword">val</span> dfWithDate = df.withColumn(<span class="string">"date"</span>, to_date(col(<span class="string">"InvoiceDate"</span>),</span><br><span class="line">  <span class="string">"MM/d/yyyy H:mm"</span>))</span><br><span class="line">dfWithDate.createOrReplaceTempView(<span class="string">"dfWithDate"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// in Scala</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.expressions.<span class="type">Window</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.col</span><br><span class="line"><span class="keyword">val</span> windowSpec = <span class="type">Window</span></span><br><span class="line">  .partitionBy(<span class="string">"CustomerId"</span>, <span class="string">"date"</span>)</span><br><span class="line">  .orderBy(col(<span class="string">"Quantity"</span>).desc)</span><br><span class="line">  .rowsBetween(<span class="type">Window</span>.unboundedPreceding, <span class="type">Window</span>.currentRow)</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.max</span><br><span class="line"><span class="keyword">val</span> maxPurchaseQuantity = max(col(<span class="string">"Quantity"</span>)).over(windowSpec)</span><br><span class="line"></span><br><span class="line"><span class="comment">// in Scala</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;dense_rank, rank&#125;</span><br><span class="line"><span class="keyword">val</span> purchaseDenseRank = dense_rank().over(windowSpec)</span><br><span class="line"><span class="keyword">val</span> purchaseRank = rank().over(windowSpec)</span><br><span class="line"></span><br><span class="line"><span class="comment">// in Scala</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.col</span><br><span class="line"></span><br><span class="line">dfWithDate.where(<span class="string">"CustomerId IS NOT NULL"</span>).orderBy(<span class="string">"CustomerId"</span>)</span><br><span class="line">  .select(</span><br><span class="line">    col(<span class="string">"CustomerId"</span>),</span><br><span class="line">    col(<span class="string">"date"</span>),</span><br><span class="line">    col(<span class="string">"Quantity"</span>),</span><br><span class="line">    purchaseRank.alias(<span class="string">"quantityRank"</span>),</span><br><span class="line">    purchaseDenseRank.alias(<span class="string">"quantityDenseRank"</span>),</span><br><span class="line">    maxPurchaseQuantity.alias(<span class="string">"maxPurchaseQuantity"</span>)).show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> CustomerId, <span class="built_in">date</span>, Quantity,</span><br><span class="line">  <span class="keyword">rank</span>(Quantity) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> CustomerId, <span class="built_in">date</span></span><br><span class="line">                       <span class="keyword">ORDER</span> <span class="keyword">BY</span> Quantity <span class="keyword">DESC</span> <span class="keyword">NULLS</span> <span class="keyword">LAST</span></span><br><span class="line">                       <span class="keyword">ROWS</span> <span class="keyword">BETWEEN</span></span><br><span class="line">                         <span class="keyword">UNBOUNDED</span> <span class="keyword">PRECEDING</span> <span class="keyword">AND</span></span><br><span class="line">                         <span class="keyword">CURRENT</span> <span class="keyword">ROW</span>) <span class="keyword">as</span> <span class="keyword">rank</span>,</span><br><span class="line"></span><br><span class="line">  <span class="keyword">dense_rank</span>(Quantity) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> CustomerId, <span class="built_in">date</span></span><br><span class="line">                             <span class="keyword">ORDER</span> <span class="keyword">BY</span> Quantity <span class="keyword">DESC</span> <span class="keyword">NULLS</span> <span class="keyword">LAST</span></span><br><span class="line">                             <span class="keyword">ROWS</span> <span class="keyword">BETWEEN</span></span><br><span class="line">                               <span class="keyword">UNBOUNDED</span> <span class="keyword">PRECEDING</span> <span class="keyword">AND</span></span><br><span class="line">                               <span class="keyword">CURRENT</span> <span class="keyword">ROW</span>) <span class="keyword">as</span> dRank,</span><br><span class="line"></span><br><span class="line">  <span class="keyword">max</span>(Quantity) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> CustomerId, <span class="built_in">date</span></span><br><span class="line">                      <span class="keyword">ORDER</span> <span class="keyword">BY</span> Quantity <span class="keyword">DESC</span> <span class="keyword">NULLS</span> <span class="keyword">LAST</span></span><br><span class="line">                      <span class="keyword">ROWS</span> <span class="keyword">BETWEEN</span></span><br><span class="line">                        <span class="keyword">UNBOUNDED</span> <span class="keyword">PRECEDING</span> <span class="keyword">AND</span></span><br><span class="line">                        <span class="keyword">CURRENT</span> <span class="keyword">ROW</span>) <span class="keyword">as</span> maxPurchase</span><br><span class="line"><span class="keyword">FROM</span> dfWithDate <span class="keyword">WHERE</span> CustomerId <span class="keyword">IS</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> CustomerId</span><br></pre></td></tr></table></figure>
+
+<p><img src="image/Aggregation2.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%202.png"></p>
+<h1 id="Grouping-Sets"><a href="#Grouping-Sets" class="headerlink" title="Grouping Sets"></a>Grouping Sets</h1><p>grouping sets可以理解为按照一个或多个维度分组并统计，grouping sets只作用于SQL</p>
+<p>例如，下面两段SQL在结果上是等效的</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> CustomerId, stockCode, <span class="keyword">sum</span>(Quantity) <span class="keyword">FROM</span> dfNoNull</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> customerId, stockCode</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> CustomerId <span class="keyword">DESC</span>, stockCode <span class="keyword">DESC</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> CustomerId, stockCode, <span class="keyword">sum</span>(Quantity) <span class="keyword">FROM</span> dfNoNull</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> customerId, stockCode <span class="keyword">GROUPING</span> <span class="keyword">SETS</span>((customerId, stockCode))</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> CustomerId <span class="keyword">DESC</span>, stockCode <span class="keyword">DESC</span></span><br></pre></td></tr></table></figure>
+
+<p>如果我们想要得到对整个结果集以及根据 (CustomerId, stockCode)维度的统计，则需要用到grouping sets</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> CustomerId, stockCode, <span class="keyword">sum</span>(Quantity) <span class="keyword">FROM</span> dfNoNull</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> customerId, stockCode <span class="keyword">GROUPING</span> <span class="keyword">SETS</span>((customerId, stockCode),())</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> CustomerId <span class="keyword">DESC</span>, stockCode <span class="keyword">DESC</span></span><br></pre></td></tr></table></figure>
+
+<p>同时需要注意的是,grouping sets的数据源必须没有null,否则将会和结果集的null有冲突</p>
+<p><img src="image/Aggregation3.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%203.png"></p>
+<h2 id="Rollups"><a href="#Rollups" class="headerlink" title="Rollups"></a>Rollups</h2><p>Rollups 将 group中的每个元素按照层级进行group by，例如</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rolledUpDf = <span class="type">Seq</span>(</span><br><span class="line">      (<span class="string">"2020-01-01"</span>, <span class="string">"USA"</span>, <span class="string">"30"</span>),</span><br><span class="line">      (<span class="string">"2020-01-02"</span>, <span class="string">"USA"</span>, <span class="string">"70"</span>),</span><br><span class="line">      (<span class="string">"2020-01-01"</span>,<span class="string">"China"</span>,<span class="string">"90"</span>))</span><br><span class="line">      .toDF(<span class="string">"Date"</span>,<span class="string">"Country"</span>,<span class="string">"Quantity"</span>)</span><br><span class="line">      .rollup(<span class="string">"Date"</span>,<span class="string">"Country"</span>)</span><br><span class="line">      .agg(sum(<span class="string">"Quantity"</span>))</span><br><span class="line">      .selectExpr(<span class="string">"Date"</span>, <span class="string">"Country"</span>,<span class="string">"`sum(Quantity)` as totalQuantity"</span>)</span><br><span class="line">    rolledUpDf.show(<span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码将按照三个level进行聚合</p>
+<ul>
+<li>（）</li>
+<li>group by (Date)</li>
+<li>group by (Date, Country)</li>
+</ul>
+<p><img src="image/Aggregation4.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%204.png"></p>
+<h2 id="Cube"><a href="#Cube" class="headerlink" title="Cube"></a>Cube</h2><p>按照所有可能的组合进行group by</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> cubedDF = <span class="type">Seq</span>(</span><br><span class="line">      (<span class="string">"2020-01-01"</span>, <span class="string">"USA"</span>, <span class="string">"30"</span>),</span><br><span class="line">      (<span class="string">"2020-01-02"</span>, <span class="string">"USA"</span>, <span class="string">"70"</span>),</span><br><span class="line">      (<span class="string">"2020-01-01"</span>,<span class="string">"China"</span>,<span class="string">"90"</span>))</span><br><span class="line">      .toDF(<span class="string">"Date"</span>,<span class="string">"Country"</span>,<span class="string">"Quantity"</span>)</span><br><span class="line">      .cube(<span class="string">"Date"</span>,<span class="string">"Country"</span>)</span><br><span class="line">      .agg(sum(<span class="string">"Quantity"</span>))</span><br><span class="line">      .selectExpr(<span class="string">"Date"</span>, <span class="string">"Country"</span>,<span class="string">"`sum(Quantity)` as totalQuantity"</span>)</span><br><span class="line">    cubedDF.show(<span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="image/Aggregation5.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%205.png"></p>
+<h2 id="Grouping-Metadata"><a href="#Grouping-Metadata" class="headerlink" title="Grouping Metadata"></a>Grouping Metadata</h2><p>为不同的grouping打上编号</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions.&#123;grouping_id, sum, expr&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> cubedDF = <span class="type">Seq</span>(</span><br><span class="line">      (<span class="string">"2020-01-01"</span>, <span class="string">"USA"</span>, <span class="string">"30"</span>),</span><br><span class="line">      (<span class="string">"2020-01-02"</span>, <span class="string">"USA"</span>, <span class="string">"70"</span>),</span><br><span class="line">      (<span class="string">"2020-01-01"</span>,<span class="string">"China"</span>,<span class="string">"90"</span>))</span><br><span class="line">      .toDF(<span class="string">"Date"</span>,<span class="string">"Country"</span>,<span class="string">"Quantity"</span>)</span><br><span class="line">      .cube(<span class="string">"Date"</span>,<span class="string">"Country"</span>)</span><br><span class="line">      .agg(grouping_id(),sum(<span class="string">"Quantity"</span>))</span><br><span class="line">      .orderBy(expr(<span class="string">"grouping_id()"</span>).desc)</span><br><span class="line">    cubedDF.show(<span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="image/Aggregation6.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%206.png"></p>
+<h2 id="Pivot"><a href="#Pivot" class="headerlink" title="Pivot"></a>Pivot</h2><p>行转列</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> pivoted = dfWithDate.groupBy(<span class="string">"date"</span>).pivot(<span class="string">"Country"</span>).sum()</span><br><span class="line">pivoted.where(<span class="string">"date &gt; '2011-12-05'"</span>).select(<span class="string">"date"</span> ,<span class="string">"`USA_sum(Quantity)`"</span>).show()</span><br></pre></td></tr></table></figure>
+
+<p><img src="image/Aggregation7.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%207.png"></p>
+<h1 id="User-Defined-Aggregation-Functions"><a href="#User-Defined-Aggregation-Functions" class="headerlink" title="User-Defined Aggregation Functions"></a>User-Defined Aggregation Functions</h1><p>用户自定义聚合函数（UDAF）的几个要件</p>
+<ul>
+<li>inputSchema</li>
+<li>bufferSchema</li>
+<li>deterministic</li>
+<li>initialize</li>
+<li>update</li>
+<li>merge</li>
+<li>evaluate</li>
+</ul>
+<p>例子：实现一个聚合函数，输入多行，返回多行是否都为true</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.expressions.<span class="type">MutableAggregationBuffer</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.expressions.<span class="type">UserDefinedAggregateFunction</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.<span class="type">Row</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.types._</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BoolAnd</span> <span class="keyword">extends</span> <span class="title">UserDefinedAggregateFunction</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">inputSchema</span></span>: org.apache.spark.sql.types.<span class="type">StructType</span> =</span><br><span class="line">    <span class="type">StructType</span>(<span class="type">StructField</span>(<span class="string">"value"</span>, <span class="type">BooleanType</span>) :: <span class="type">Nil</span>)</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">bufferSchema</span></span>: <span class="type">StructType</span> = <span class="type">StructType</span>(</span><br><span class="line">    <span class="type">StructField</span>(<span class="string">"result"</span>, <span class="type">BooleanType</span>) :: <span class="type">Nil</span></span><br><span class="line">  )</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">dataType</span></span>: <span class="type">DataType</span> = <span class="type">BooleanType</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">deterministic</span></span>: <span class="type">Boolean</span> = <span class="literal">true</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">initialize</span></span>(buffer: <span class="type">MutableAggregationBuffer</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    buffer(<span class="number">0</span>) = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">update</span></span>(buffer: <span class="type">MutableAggregationBuffer</span>, input: <span class="type">Row</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    buffer(<span class="number">0</span>) = buffer.getAs[<span class="type">Boolean</span>](<span class="number">0</span>) &amp;&amp; input.getAs[<span class="type">Boolean</span>](<span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">merge</span></span>(buffer1: <span class="type">MutableAggregationBuffer</span>, buffer2: <span class="type">Row</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    buffer1(<span class="number">0</span>) = buffer1.getAs[<span class="type">Boolean</span>](<span class="number">0</span>) &amp;&amp; buffer2.getAs[<span class="type">Boolean</span>](<span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">evaluate</span></span>(buffer: <span class="type">Row</span>): <span class="type">Any</span> = &#123;</span><br><span class="line">    buffer(<span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">BoolAnd</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]):<span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> ba = <span class="keyword">new</span> <span class="type">BoolAnd</span></span><br><span class="line">    <span class="keyword">val</span> spark = <span class="type">SparkSession</span>.builder().master(<span class="string">"local"</span>).appName(<span class="string">"yifan_spark_test2"</span>)</span><br><span class="line">      .getOrCreate()</span><br><span class="line">    spark.udf.register(<span class="string">"booland"</span>, ba)</span><br><span class="line">    spark.range(<span class="number">1</span>)</span><br><span class="line">      .selectExpr(<span class="string">"explode(array(TRUE, TRUE, TRUE)) as t"</span>)</span><br><span class="line">      .selectExpr(<span class="string">"explode(array(TRUE, FALSE, TRUE)) as f"</span>, <span class="string">"t"</span>)</span><br><span class="line">      .select(ba(col(<span class="string">"t"</span>)), expr(<span class="string">"booland(f)"</span>))</span><br><span class="line">      .show()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="image/Aggregation8.png" alt="Aggregation%20816201a0a7eb48d69253627d0f28bdb4/Aggregation%208.png"></p>
+<h1 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h1><p>Spark SQL 在执行聚合时（groupBy）底层调用了哪些函数？(TODO)<br>countDistinct 和 groupBy哪一个性能比较好? (TODO)</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/spark/" rel="tag"># spark</a>
+            
+              <a href="/tags/aggregation/" rel="tag"># aggregation</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/11/28/2020-11-28-Introduction Of Spark Cache/" rel="next" title=" Introduction Of Spark Cache">
+                  <i class="fa fa-chevron-left"></i>  Introduction Of Spark Cache
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Definition-of-Aggregation"><span class="nav-number">2.</span> <span class="nav-text">Definition of Aggregation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Brief-Overview"><span class="nav-number">3.</span> <span class="nav-text">Brief Overview</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Aggregation-Functions"><span class="nav-number">4.</span> <span class="nav-text">Aggregation Functions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#count"><span class="nav-number">4.1.</span> <span class="nav-text">count</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#countDistinct"><span class="nav-number">4.2.</span> <span class="nav-text">countDistinct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#approx-count-distinct"><span class="nav-number">4.3.</span> <span class="nav-text">approx_count_distinct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#first-and-last"><span class="nav-number">4.4.</span> <span class="nav-text">first and last</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#min-and-max"><span class="nav-number">4.5.</span> <span class="nav-text">min and max</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sum"><span class="nav-number">4.6.</span> <span class="nav-text">sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sumDistinct"><span class="nav-number">4.7.</span> <span class="nav-text">sumDistinct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#avg"><span class="nav-number">4.8.</span> <span class="nav-text">avg</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#variance-and-standard-deviation"><span class="nav-number">4.9.</span> <span class="nav-text">variance and standard deviation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#skewness-and-kurtosis"><span class="nav-number">4.10.</span> <span class="nav-text">skewness and kurtosis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#covariance-and-correlation"><span class="nav-number">4.11.</span> <span class="nav-text">covariance and correlation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#aggregating-to-complex-types"><span class="nav-number">4.12.</span> <span class="nav-text">aggregating to complex types</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Grouping"><span class="nav-number">5.</span> <span class="nav-text">Grouping</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Grouping-With-Expressions"><span class="nav-number">5.1.</span> <span class="nav-text">Grouping With Expressions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Grouping-With-Maps"><span class="nav-number">5.2.</span> <span class="nav-text">Grouping With Maps</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Window-Functions"><span class="nav-number">6.</span> <span class="nav-text">Window Functions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何定义一个窗口"><span class="nav-number">6.1.</span> <span class="nav-text">如何定义一个窗口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义一个窗口函数"><span class="nav-number">6.2.</span> <span class="nav-text">定义一个窗口函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#aggregate-function"><span class="nav-number">6.2.1.</span> <span class="nav-text">aggregate function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ranking-function"><span class="nav-number">6.2.2.</span> <span class="nav-text">ranking function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整的例子"><span class="nav-number">6.3.</span> <span class="nav-text">完整的例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scala"><span class="nav-number">6.3.1.</span> <span class="nav-text">Scala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL"><span class="nav-number">6.3.2.</span> <span class="nav-text">SQL</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Grouping-Sets"><span class="nav-number">7.</span> <span class="nav-text">Grouping Sets</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Rollups"><span class="nav-number">7.1.</span> <span class="nav-text">Rollups</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cube"><span class="nav-number">7.2.</span> <span class="nav-text">Cube</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Grouping-Metadata"><span class="nav-number">7.3.</span> <span class="nav-text">Grouping Metadata</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pivot"><span class="nav-number">7.4.</span> <span class="nav-text">Pivot</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#User-Defined-Aggregation-Functions"><span class="nav-number">8.</span> <span class="nav-text">User-Defined Aggregation Functions</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q-amp-A"><span class="nav-number">9.</span> <span class="nav-text">Q&amp;A</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
