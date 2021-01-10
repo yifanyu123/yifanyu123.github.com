@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Arial:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '7T9CWH1LOC',
+      apiKey: '0693b1b8f1cc7ad467699eb3db2f8c22',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Preface本文为阅读 “Spark SQL内核剖析” 第三章 “Spark SQL 执行全过程概述”所做的归纳和整理。以下内容主要基于Spark 2.1 &amp;amp; Spark 2.2。首先，作者在该章的第一部分介绍了Spark SQL 执行优化器Catalyst涉及的重要概念，包括InternalRow, TreeNode体系和Expression体系。在该章的第二部分，作者介绍了从一段SQ">
+<meta name="keywords" content="spark sql,spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SparkSQL执行全过程概述">
+<meta property="og:url" content="http://yifanyu123.github.io/2021/01/10/2021-01-10-SparkSQL执行全过程概述/index.html">
+<meta property="og:site_name" content="小刺猬的博客">
+<meta property="og:description" content="Preface本文为阅读 “Spark SQL内核剖析” 第三章 “Spark SQL 执行全过程概述”所做的归纳和整理。以下内容主要基于Spark 2.1 &amp;amp; Spark 2.2。首先，作者在该章的第一部分介绍了Spark SQL 执行优化器Catalyst涉及的重要概念，包括InternalRow, TreeNode体系和Expression体系。在该章的第二部分，作者介绍了从一段SQ">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/InternalRow%E4%BD%93%E7%B3%BB.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/GenericInternalRow.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/TreeNode%E4%BD%93%E7%B3%BB.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/TreeNode%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/Expression%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/SQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%A7%88.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/%E5%AE%9E%E9%99%85%E8%BD%AC%E6%8D%A2%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F.png">
+<meta property="og:updated_time" content="2021-01-10T10:23:04.826Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SparkSQL执行全过程概述">
+<meta name="twitter:description" content="Preface本文为阅读 “Spark SQL内核剖析” 第三章 “Spark SQL 执行全过程概述”所做的归纳和整理。以下内容主要基于Spark 2.1 &amp;amp; Spark 2.2。首先，作者在该章的第一部分介绍了Spark SQL 执行优化器Catalyst涉及的重要概念，包括InternalRow, TreeNode体系和Expression体系。在该章的第二部分，作者介绍了从一段SQ">
+<meta name="twitter:image" content="http://yifanyu123.github.io/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/InternalRow%E4%BD%93%E7%B3%BB.png">
+  <link rel="canonical" href="http://yifanyu123.github.io/2021/01/10/2021-01-10-SparkSQL执行全过程概述/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>SparkSQL执行全过程概述 | 小刺猬的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小刺猬的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">越努力越幸运</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2021/01/10/2021-01-10-SparkSQL执行全过程概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            SparkSQL执行全过程概述
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2021-01-10 00:00:00 / Modified: 18:23:04" itemprop="dateCreated datePublished" datetime="2021-01-10T00:00:00+08:00">2021-01-10</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h1><p>本文为阅读 “Spark SQL内核剖析” 第三章 “Spark SQL 执行全过程概述”所做的归纳和整理。以下内容主要基于Spark 2.1 &amp; Spark 2.2。首先，作者在该章的第一部分介绍了Spark SQL 执行优化器Catalyst涉及的重要概念，包括InternalRow, TreeNode体系和Expression体系。在该章的第二部分，作者介绍了从一段SQL语句到Spark可以执行的RDD[InternalRow]类型的转换所要经历的三个阶段, 逻辑计划， 物理计划以及代码的生产以及提交。</p><a id="more"></a>
+<h1 id="Catalyst涉及的重要概念"><a href="#Catalyst涉及的重要概念" class="headerlink" title="Catalyst涉及的重要概念"></a>Catalyst涉及的重要概念</h1><p>本节先简要介绍C a t al y st 中涉及的重要概念和数据结构,主要包括I n t e r n a l R o w体系、T r e e N o d e体系和E x p r e s si o n 体系</p>
+<h2 id="InternalRow"><a href="#InternalRow" class="headerlink" title="InternalRow"></a>InternalRow</h2><p>I n t e r n a l R o w 就是用来表示一行行数据的类,因此图3. 3 中物理算子树节点产生和转换的R D D类型即为R D D[ I n t e r n a l R o w] 。</p>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/InternalRow%E4%BD%93%E7%B3%BB.png" alt="InternalRow体系"></p>
+<p>InternalRow体系</p>
+<h3 id="B-a-s-e-G-e-n-e-r-i-c-l-n-t-e-r-n-a-l-R-o-w"><a href="#B-a-s-e-G-e-n-e-r-i-c-l-n-t-e-r-n-a-l-R-o-w" class="headerlink" title="B a s e G e n e r i c l n t e r n a l R o w :"></a>B a s e G e n e r i c l n t e r n a l R o w :</h3><blockquote>
+<p>同样是一个抽象类,实现了I n t e r n a l R o w 中定义的所有g e t 类型方法,这些方法的实现都通过调用类中定义的g e n e r i c G e t 虚函数进行,该函数的实现在下一级子类中</p>
+</blockquote>
+<p>1.G e n e r i c l n t e r n a l ­ R o w</p>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/GenericInternalRow.png" alt="GenericInternalRow"></p>
+<p>GenericInternalRow</p>
+<p>不可变 ，G e n e r i c l n t e r n a l R o w 构造参数是A r r a y [ A n y ]类型,采用对象数组进行底层存储,g e n e r i c G e t 也是直接根据下标访问的。 这里需要注意,数组是非拷贝的,因此一旦创建,就不允许通过s e t 操作进行改变。</p>
+<p>2.S p e c i f i c i n t e r n a l R o w</p>
+<p>可变 ，S p e c i f i c l r 出r n a l R o w 则是以A r r a y [ M u t a b l e V a l u e ] 为构造参数的, 允许通过s e t 操作进行修改</p>
+<p>3.M u t a b l e U n s a f e R o w</p>
+<h3 id="Joined-Row"><a href="#Joined-Row" class="headerlink" title="Joined Row"></a>Joined Row</h3><blockquote>
+<p>顾名思义,该类主要用于J o i n 操作,将两个I n t e r n a l R o w 放在一起形成新的I n t e r n a l R o w。使用时需要注意构造参数的顺序。</p>
+</blockquote>
+<h3 id="Unsafe-Row"><a href="#Unsafe-Row" class="headerlink" title="Unsafe Row"></a>Unsafe Row</h3><blockquote>
+<p>不采用J a v a 对象存储的方式,避免了J V M中垃圾回收(G C)的代价。此外,U n s a f e R o w 对行数据进行了特定的编码,使得存储更加高效。</p>
+</blockquote>
+<h2 id="Tree-Node体系"><a href="#Tree-Node体系" class="headerlink" title="Tree Node体系"></a>Tree Node体系</h2><p>T r e e N o d e 类是S p a r k S Q L中所有树结构的基类,定义了一系列通用的集合操作和树遍历操作接口。</p>
+<blockquote>
+<p>T r e e N o d e 内部包含一个S e q [ B a s e T y p e ] 类型的变量c h i l d r e n 来表示孩子节点。</p>
+</blockquote>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/TreeNode%E4%BD%93%E7%B3%BB.png" alt="TreeNode体系"></p>
+<p>TreeNode体系</p>
+<h3 id="两个子类继承体系"><a href="#两个子类继承体系" class="headerlink" title="两个子类继承体系"></a>两个子类继承体系</h3><p>T r e e N o d e 提供的仅仅是一种泛型,实际上包含了两个子类继承体系,</p>
+<ol>
+<li>Q u e r y Plan</li>
+<li>E x p r e s s i o n 体系</li>
+</ol>
+<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><h3 id="TreeNode-basic-operation"><a href="#TreeNode-basic-operation" class="headerlink" title="TreeNode basic operation"></a>TreeNode basic operation</h3><p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/TreeNode%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.png" alt="TreeNode基本操作"></p>
+<p>TreeNode基本操作</p>
+<ol>
+<li>C a t a l y s t 中还提供了节点位置功能,即能够根据T r e e N o d e 定位到对应的S Q L 字符串中的行数和起始位置。</li>
+</ol>
+<h2 id="Expression"><a href="#Expression" class="headerlink" title="Expression"></a>Expression</h2><p>表达式一般指的是不需要触发执行引擎而能够直接进行计算的单元,例如加减乘除四则运算、逻辑操作、转换操作、过滤操作等。</p>
+<ol>
+<li>在E x p r e s s i o n 类中,主要定义了5 个方面的操作</li>
+</ol>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/Expression%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.png" alt="Expression基本操作"></p>
+<p>Expression基本操作</p>
+<h3 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h3><p>Foldable</p>
+<blockquote>
+<p>该属性用来标记表达式能否在查询执行之前直接静态计算。目前,f o l d a b l e 为t r u e 的情况有两种</p>
+</blockquote>
+<ul>
+<li>Literal<br>第一种是该表达式为L i t e r a l 类型(“字面值”,例如常量等)</li>
+<li>Child Expression Foldable<br>第二种是当且仅当其子表达式中f o l d a b l e 都为t r u e 时</li>
+</ul>
+<p>Deterministic</p>
+<ol>
+<li>协助算子优化（谓词下推）<br>该属性用来标记表达式是否为确定性的,即每次执行e v a l 函数的输出是否都相同。考虑到S p a r k 分布式执行环境中数据的S h u f f l e 操作带来的不确定性,以及某些表达式(如R a n d 等)本身具有不确定性,该属性对于算子树优化中判断谓词能否下推等很有必要。</li>
+</ol>
+<p>r e f e r e n c e s</p>
+<p>canonicalized</p>
+<p>规范化处理会在确保输出结果相同的前提下通过一些规则对表达式进行重写</p>
+<p>SemanticEqual</p>
+<p>判断两个表达式在语义上是否等价。</p>
+<ul>
+<li>两个表达式都是确定性的( d e t e r m i n i s t i c 为t r u e )</li>
+<li>两个表达式经过规范化处理后(C a n o n i c a l i z e d )仍然相同。</li>
+</ul>
+<h3 id="核心操作"><a href="#核心操作" class="headerlink" title="核心操作"></a>核心操作</h3><h3 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h3><h3 id="字符串表达式"><a href="#字符串表达式" class="headerlink" title="字符串表达式"></a>字符串表达式</h3><h3 id="等价性判断"><a href="#等价性判断" class="headerlink" title="等价性判断"></a>等价性判断</h3><h1 id="从SQL-到-RDD"><a href="#从SQL-到-RDD" class="headerlink" title="从SQL 到 RDD"></a>从SQL 到 RDD</h1><h2 id="一个简单的例子"><a href="#一个简单的例子" class="headerlink" title="一个简单的例子"></a>一个简单的例子</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> spark = <span class="type">SparkSession</span>.builder().appName(<span class="string">"example"</span>).master(<span class="string">"local"</span>).getOrCreate()</span><br><span class="line">spark.read.json(<span class="string">"student.json"</span>).createOrReplaceTemplateView(<span class="string">"student"</span>)</span><br><span class="line">spark.sql(<span class="string">"select name from student where age&gt;18"</span>).show()</span><br></pre></td></tr></table></figure>
+
+<p>上述代码主要做了如下几件事情</p>
+<p>（1）创建SparkSession, spark程序的入口</p>
+<p>（2）读取数据（数据源可以为本地文件, hdfs 或者 hive等）</p>
+<p>（3）执行spark sql语句并将结果收集到driver端</p>
+<h2 id="Logic-Plan"><a href="#Logic-Plan" class="headerlink" title="Logic Plan"></a>Logic Plan</h2><p>逻辑计划阶段会将用户所写的S Q L 语句转换成树型数据结构(逻辑算子树),S Q L 语句中蕴含的逻辑映射到逻辑算子树的不同节点</p>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/SQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%A7%88.png" alt="SQL执行全过程概览"></p>
+<p>SQL执行全过程概览</p>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/%E5%AE%9E%E9%99%85%E8%BD%AC%E6%8D%A2%E8%BF%87%E7%A8%8B.png" alt="实际转换过程"></p>
+<p>实际转换过程</p>
+<p>逻辑算子树的生成过程经历3 个子阶段</p>
+<ol>
+<li>Unresolved Logic Plan<br>U n r e s o l v e d L o g i c a ! P l a n</li>
+<li>Analyzed Logic Plan<br>A n a l y z e d L o g i c a l P l a n</li>
+<li>Optimized Logic Plan<br>O p t i m i z e dlo g i c a l P l a n</li>
+</ol>
+<h2 id="Physical-Plan"><a href="#Physical-Plan" class="headerlink" title="Physical Plan"></a>Physical Plan</h2><p>物理计划阶段将上一步逻辑计划阶段生成的逻辑算子树进行进一步转换,生成物理算子树。物理算子树的节点会直接生成R D D或对R D D进行t r a n s f o r m a t i o n 操作(注:每个物理计划节点中都实现了对R D D进行转换的e x e c u t e 方法)</p>
+<ol>
+<li>Interator[physical plan]<br>生成物理算子树的列表I t e r a t o r [ P h y s i c a l P l a n ]</li>
+<li>Spark Plan<br>从列表中按照一定的策略选取最优的物理算子树(S p a r k P l a n )</li>
+<li>Prepared Spark Plan<br>对选取的物理算子树进行提交前的准备工作,例如,确保分区操作正确、物理算子树节点重用、执行代码生成等,得到“准备后”的物理算子树(P r e p a r e dS p a r k P l a n)</li>
+</ol>
+<h2 id="Submit"><a href="#Submit" class="headerlink" title="Submit"></a>Submit</h2><p>物理算子树生成的RDD执行a c t i o n 操作</p>
+<ol>
+<li>Driver端运行<br>从S Q L 语句的解析一直到提交之前,上述整个转换过程都在S p a r k 集群的D r i v e r 端进行,不涉及分布式环境。</li>
+<li>Physical Plan 根结点 ProjectExec<br>生成的物理算子树根节点是P r o j e c t E x e c ,每个物理节点中的e x e c u t e 函数都是执行调用接口,由根节点开始递归调用,从叶子节点开始执行。</li>
+<li>F i l e S o u r c e S c a n E x e c 叶子执行节点中需要构造数据源对应的R D D , Filter E x e c 和P r o j e c t E x e c 中的e x e c u t e 函数对R D D 执行相应的t r a n s f o r m a t i o n 操作。</li>
+<li>Spark S Q L内部实现上述流程中平台无关部分的基础框架称为C a t a l y s t</li>
+</ol>
+<h1 id="内部数据类型"><a href="#内部数据类型" class="headerlink" title="内部数据类型"></a>内部数据类型</h1><p>数据类型主要用来表示数据表中存储的列信息,常见的数据类型包括简单的整数、浮点数、字符串,以及复杂的嵌套结构等。</p>
+<p><img src="/image/SparkSQL%E6%89%A7%E8%A1%8C%E5%85%A8%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F.png" alt="数据类型系统"></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/spark-sql/" rel="tag"># spark sql</a>
+            
+              <a href="/tags/spark/" rel="tag"># spark</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2021/01/09/2021-01-09-Spark聚合操作/" rel="next" title="Spark聚合操作">
+                  <i class="fa fa-chevron-left"></i> Spark聚合操作
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDI2OS8xMDgwNg=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Preface"><span class="nav-number">1.</span> <span class="nav-text">Preface</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Catalyst涉及的重要概念"><span class="nav-number">2.</span> <span class="nav-text">Catalyst涉及的重要概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#InternalRow"><span class="nav-number">2.1.</span> <span class="nav-text">InternalRow</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-a-s-e-G-e-n-e-r-i-c-l-n-t-e-r-n-a-l-R-o-w"><span class="nav-number">2.1.1.</span> <span class="nav-text">B a s e G e n e r i c l n t e r n a l R o w :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Joined-Row"><span class="nav-number">2.1.2.</span> <span class="nav-text">Joined Row</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsafe-Row"><span class="nav-number">2.1.3.</span> <span class="nav-text">Unsafe Row</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tree-Node体系"><span class="nav-number">2.2.</span> <span class="nav-text">Tree Node体系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#两个子类继承体系"><span class="nav-number">2.2.1.</span> <span class="nav-text">两个子类继承体系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-number">2.2.2.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeNode-basic-operation"><span class="nav-number">2.2.3.</span> <span class="nav-text">TreeNode basic operation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Expression"><span class="nav-number">2.3.</span> <span class="nav-text">Expression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本属性"><span class="nav-number">2.3.1.</span> <span class="nav-text">基本属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心操作"><span class="nav-number">2.3.2.</span> <span class="nav-text">核心操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入输出"><span class="nav-number">2.3.3.</span> <span class="nav-text">输入输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串表达式"><span class="nav-number">2.3.4.</span> <span class="nav-text">字符串表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#等价性判断"><span class="nav-number">2.3.5.</span> <span class="nav-text">等价性判断</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从SQL-到-RDD"><span class="nav-number">3.</span> <span class="nav-text">从SQL 到 RDD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一个简单的例子"><span class="nav-number">3.1.</span> <span class="nav-text">一个简单的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Logic-Plan"><span class="nav-number">3.2.</span> <span class="nav-text">Logic Plan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Physical-Plan"><span class="nav-number">3.3.</span> <span class="nav-text">Physical Plan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Submit"><span class="nav-number">3.4.</span> <span class="nav-text">Submit</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内部数据类型"><span class="nav-number">4.</span> <span class="nav-text">内部数据类型</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/profile_nico.JPG"
+      alt="YYF">
+  <p class="site-author-name" itemprop="name">YYF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/yifanyu123" title="GitHub &rarr; https://github.com/yifanyu123" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:yifanyulucky@gmail.com" title="E-Mail &rarr; mailto:yifanyulucky@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YYF</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
