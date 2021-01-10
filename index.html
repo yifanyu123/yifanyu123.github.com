@@ -221,6 +221,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2021/01/10/2021-01-10-Resilient Distributed Datasets (RDDs) Note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/01/10/2021-01-10-Resilient Distributed Datasets (RDDs) Note/" class="post-title-link" itemprop="url">Resillient Distributed Datasets Note</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2021-01-10 00:00:00 / Modified: 21:13:35" itemprop="dateCreated datePublished" datetime="2021-01-10T00:00:00+08:00">2021-01-10</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>本文为阅读Spark The Definitive Guide Chapter 12所做的归纳与整理</p><h1 id="Definition"><a href="#Definition" class="headerlink" title="Definition"></a>Definition</h1><ul>
+<li>Immutable, Partitioned Collection Of Records</li>
+<li>No Concept Of Rows in RDD, individual Records are just Java/Scala/Python Objects. There are no schema in RDDs.</li>
+<li>All the code in spark compiles down to RDD</li>
+<li>Spark’s Structured API automatically store data in an optimized, compressed binary format while you need to implement this format inside your objects manually</li>
+</ul>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2021/01/10/2021-01-10-Resilient Distributed Datasets (RDDs) Note/" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2021/01/10/2021-01-10-SparkSQL执行全过程概述/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -509,6 +610,219 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2020/08/23/2020-08-23-Kafka基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/08/23/2020-08-23-Kafka基础/" class="post-title-link" itemprop="url">Kafka基础</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2020-08-23 00:00:00" itemprop="dateCreated datePublished" datetime="2020-08-23T00:00:00+08:00">2020-08-23</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-01-09 20:51:28" itemprop="dateModified" datetime="2021-01-09T20:51:28+08:00">2021-01-09</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Kafka基础"><a href="#Kafka基础" class="headerlink" title="Kafka基础"></a>Kafka基础</h1><h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p><a href="http://kafka.apache.org/documentation/#gettingStarted" target="_blank" rel="noopener">“官网”</a><br>Technically speaking, event streaming is the practice of capturing data in real-time from event sources like databases, sensors, mobile devices, cloud services, and software applications in the form of streams of events; storing these event streams durably for later retrieval; manipulating, processing, and reacting to the event streams in real-time as well as retrospectively; and routing the event streams to different destination technologies as needed. </p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2020/08/23/2020-08-23-Kafka基础/" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2020/08/23/2020-08-23-Spark的基本架构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YYF">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/profile_nico.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小刺猬的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/08/23/2020-08-23-Spark的基本架构/" class="post-title-link" itemprop="url">Hadoop各组件基本介绍</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2020-08-23 00:00:00 / Modified: 13:17:47" itemprop="dateCreated datePublished" datetime="2020-08-23T00:00:00+08:00">2020-08-23</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Spark的基本架构"><a href="#Spark的基本架构" class="headerlink" title="Spark的基本架构"></a>Spark的基本架构</h1><p><img src="/image/spark%E6%9E%B6%E6%9E%84.png" alt="&quot;spark架构&quot;"></p><h2 id="Spark应用程序"><a href="#Spark应用程序" class="headerlink" title="Spark应用程序"></a>Spark应用程序</h2><p>组成</p><ul>
+<li>一个Driver<ul>
+<li>运行main()函数</li>
+<li>维护spark应用程序的相关信息</li>
+<li>回应用户的程序或输入</li>
+<li>分析任务并分发给若干executor进行处理</li>
+</ul>
+</li>
+<li>一组Executor<ul>
+<li>执行driver分发给它的代码</li>
+<li>将该执行器的计算状态报告给运行driver的节点</li>
+</ul>
+</li>
+</ul><p>重要概念</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2020/08/23/2020-08-23-Spark的基本架构/" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2020/08/23/2020-08-23-Spark Dataframe基本操作/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -681,219 +995,6 @@
           
             <div class="post-button">
               <a class="btn" href="/2020/08/23/2020-08-23-Hadoop各组件基本介绍/" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2020/08/23/2020-08-23-Spark的基本架构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="YYF">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/profile_nico.JPG">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小刺猬的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/08/23/2020-08-23-Spark的基本架构/" class="post-title-link" itemprop="url">Hadoop各组件基本介绍</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2020-08-23 00:00:00 / Modified: 13:17:47" itemprop="dateCreated datePublished" datetime="2020-08-23T00:00:00+08:00">2020-08-23</time>
-            </span>
-          
-            
-
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
-                    <span itemprop="name">大数据开发</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Spark的基本架构"><a href="#Spark的基本架构" class="headerlink" title="Spark的基本架构"></a>Spark的基本架构</h1><p><img src="/image/spark%E6%9E%B6%E6%9E%84.png" alt="&quot;spark架构&quot;"></p><h2 id="Spark应用程序"><a href="#Spark应用程序" class="headerlink" title="Spark应用程序"></a>Spark应用程序</h2><p>组成</p><ul>
-<li>一个Driver<ul>
-<li>运行main()函数</li>
-<li>维护spark应用程序的相关信息</li>
-<li>回应用户的程序或输入</li>
-<li>分析任务并分发给若干executor进行处理</li>
-</ul>
-</li>
-<li>一组Executor<ul>
-<li>执行driver分发给它的代码</li>
-<li>将该执行器的计算状态报告给运行driver的节点</li>
-</ul>
-</li>
-</ul><p>重要概念</p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2020/08/23/2020-08-23-Spark的基本架构/" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2020/08/23/2020-08-23-Kafka基础/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="YYF">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/profile_nico.JPG">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小刺猬的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/08/23/2020-08-23-Kafka基础/" class="post-title-link" itemprop="url">Kafka基础</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2020-08-23 00:00:00" itemprop="dateCreated datePublished" datetime="2020-08-23T00:00:00+08:00">2020-08-23</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-01-09 20:51:28" itemprop="dateModified" datetime="2021-01-09T20:51:28+08:00">2021-01-09</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/大数据开发/" itemprop="url" rel="index">
-                    <span itemprop="name">大数据开发</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Kafka基础"><a href="#Kafka基础" class="headerlink" title="Kafka基础"></a>Kafka基础</h1><h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p><a href="http://kafka.apache.org/documentation/#gettingStarted" target="_blank" rel="noopener">“官网”</a><br>Technically speaking, event streaming is the practice of capturing data in real-time from event sources like databases, sensors, mobile devices, cloud services, and software applications in the form of streams of events; storing these event streams durably for later retrieval; manipulating, processing, and reacting to the event streams in real-time as well as retrospectively; and routing the event streams to different destination technologies as needed. </p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2020/08/23/2020-08-23-Kafka基础/" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -1115,110 +1216,6 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yifanyu123.github.io/2019/09/10/2019-09-10-Spring Cache/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="YYF">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/profile_nico.JPG">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小刺猬的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/09/10/2019-09-10-Spring Cache/" class="post-title-link" itemprop="url">Spring Cache</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2019-09-10 00:00:00" itemprop="dateCreated datePublished" datetime="2019-09-10T00:00:00+08:00">2019-09-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-14 19:46:23" itemprop="dateModified" datetime="2019-10-14T19:46:23+08:00">2019-10-14</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java后端开发/" itemprop="url" rel="index">
-                    <span itemprop="name">Java后端开发</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>前言：这几天做公司项目的时候第一次接触CaffineCache,一开始写的是手动操作的版本，近几日做优化利用了Spring集成的接口来进行管理</p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2019/09/10/2019-09-10-Spring Cache/" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
@@ -1271,7 +1268,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1297,7 +1294,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">tags</span>
         </a>
       </div>
